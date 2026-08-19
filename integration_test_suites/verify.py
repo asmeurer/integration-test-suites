@@ -40,7 +40,7 @@ from sympy import (I, Integral, Mul, Pow, Rational, S, im, nan, oo, re,
                    sqrt, zoo)
 from sympy.core.symbol import Symbol
 
-__all__ = ['check_case']
+__all__ = ['check_case', 'prove_derivative']
 
 #: relative tolerance at working precision for "equal"
 EQ_TOL = Rational(1, 10)**25
@@ -62,7 +62,7 @@ PREC = 60
 SEVERITY = ['LEAKED-SYMBOLS', 'WRONG', 'UNDECIDED-NUMERICS',
             'UNDECIDED-COVERAGE', 'TIMEOUT', 'DERIV-OK-EXP-BAD',
             'DERIV-OK-SPLIT', 'DERIV-OK-EXP-NC', 'DERIV-OK',
-            'DEGENERATE']
+            'DERIV-OK-PROVEN', 'DEGENERATE']
 
 
 def _radicand_bases(f, x):
@@ -209,12 +209,66 @@ def _match_at(e1, e2, x, pt, prec=PREC):
     return 'undecided'
 
 
-def check_answer(f, x, ours, expected):
-    """Run the numerical ladder for one (already concrete) case.
+def prove_derivative(f, x, F, deep=True):
+    """Try to *prove* D(F) == f symbolically.
+
+    Returns the name of the step that settled it, or None if none did.
+    ``cancel`` alone decides the large majority of cases and is fast; the
+    trigonometric simplifier is tried only when the difference actually
+    contains trigonometric functions, and ``simplify`` only as a last
+    resort, since it is by far the expensive one -- pass ``deep=False``
+    to stop before it and keep the check cheap over a whole corpus.
+
+    A None result is "not proven", never "proven different": these
+    rewriters are one-sided.  Callers fall back on the numerical ladder,
+    which is the part that can actually convict a wrong answer.
+    """
+    from sympy import cancel, diff, expand, simplify
+    from sympy.functions.elementary.trigonometric import TrigonometricFunction
+    from sympy.functions.elementary.hyperbolic import HyperbolicFunction
+    from sympy.simplify.fu import fu
+
+    difference = diff(F, x) - f
+    if difference.is_zero:
+        return 'zero'
+    for name, rewrite in (('cancel', cancel),
+                          ('expand', lambda e: cancel(expand(e)))):
+        try:
+            if rewrite(difference).is_zero:
+                return name
+        except Exception:
+            continue
+    if difference.has(TrigonometricFunction, HyperbolicFunction):
+        try:
+            if cancel(fu(difference)).is_zero:
+                return 'fu'
+        except Exception:
+            pass
+    if deep:
+        try:
+            if simplify(difference).is_zero:
+                return 'simplify'
+        except Exception:
+            pass
+    return None
+
+
+def check_answer(f, x, ours, expected, prove=True):
+    """Decide one (already concrete) case.
+
+    A symbolic proof that D(ours) == f is tried first: it is both faster
+    and stronger than sampling, and settles the great majority of cases.
+    The numerical ladder below runs only when no proof was found, and it
+    is the only part that can convict a wrong answer.
 
     Returns a dict with 'verdict' and supporting detail.
     """
     from sympy import Derivative, diff, sign
+
+    if prove:
+        step = prove_derivative(f, x, ours)
+        if step is not None:
+            return {'verdict': 'DERIV-OK-PROVEN', 'step': step}
     dours = diff(ours, x)
     if ours.has(sign):
         # sign() is locally constant on the real line: its derivative

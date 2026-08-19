@@ -49,6 +49,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help='per-case time limit in seconds (default: 10)')
     p.add_argument('--concrete-only', action='store_true',
                    help='skip cases with symbolic constants')
+    p.add_argument('--filter', action='append', dest='filters', default=[],
+                   help='named case filter or preset; repeatable, combined '
+                        'with and. See --list-filters')
+    p.add_argument('--list-filters', action='store_true',
+                   help='list the available filters and presets and exit')
     p.add_argument('--check', action='store_true',
                    help='verify solved answers with the numerical oracle')
     p.add_argument('--check-timeout', type=int, default=60,
@@ -57,6 +62,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help='append one JSON record per case to this file')
     p.add_argument('--sympy-path',
                    help='a sympy checkout to test instead of the installed one')
+    p.add_argument('--isolate', action='store_true',
+                   help='run each case in a forked child process so that the '
+                        'time limit is enforced even when the work is inside '
+                        'an uninterruptible C call')
     p.add_argument('--list-engines', action='store_true',
                    help='list the available engines and exit')
     return p.parse_args(argv)
@@ -78,12 +87,99 @@ def classify(result, Integral, Piecewise, NonElementaryIntegral):
     return 'SOLVED', degenerate
 
 
+def evaluate(engine, case, args, deps) -> dict:
+    """Run one case and classify it; the unit of work --isolate forks."""
+    Integral, Piecewise, NonElementaryIntegral, check_case = deps
+    f, x = case.f, case.x
+    out: dict = {'reason': '', 'result': None, 'check': None,
+                 'degenerate': False}
+    t_case = time.time()
+    signal.alarm(args.timeout)
+    try:
+        result = engine.call(f, x)
+        out['cls'], out['degenerate'] = classify(
+            result, Integral, Piecewise, NonElementaryIntegral)
+        out['result'] = str(result)
+    except TimeoutError:
+        result, out['cls'] = None, 'timeout'
+    except NotImplementedError as e:
+        result, out['cls'] = None, 'NIE'
+        out['reason'] = str(e)[:160].replace('\n', ' ')
+    except Exception as e:
+        result, out['cls'] = None, 'error:' + type(e).__name__
+        out['reason'] = str(e)[:160].replace('\n', ' ')
+    finally:
+        signal.alarm(0)
+
+    if check_case is not None and out['cls'] == 'SOLVED':
+        signal.alarm(args.check_timeout)
+        try:
+            out['check'] = check_case(f, x, result, case.expected,
+                                      timeout=args.check_timeout)
+        except TimeoutError:
+            out['check'] = {'verdict': 'TIMEOUT'}
+        except Exception as e:
+            out['check'] = {'verdict': 'CHECK-ERROR', 'error': type(e).__name__}
+        finally:
+            signal.alarm(0)
+    out['secs'] = round(time.time() - t_case, 3)
+    return out
+
+
+def evaluate_isolated(engine, case, args, deps) -> dict:
+    """evaluate() in a forked child, killed if it overruns its budget.
+
+    A SIGALRM only lands between bytecodes, so a case that disappears
+    into a long C-level computation -- an astronomically large evalf, for
+    instance -- ignores the in-process time limit entirely.  Running the
+    case in a child and killing it is the only hard bound.
+    """
+    import multiprocessing as mp
+
+    ctx = mp.get_context('fork')
+    queue = ctx.Queue()
+
+    def worker():
+        signal.signal(signal.SIGALRM,
+                      lambda s, fr: (_ for _ in ()).throw(TimeoutError()))
+        queue.put(evaluate(engine, case, args, deps))
+
+    proc = ctx.Process(target=worker)
+    budget = args.timeout + (args.check_timeout if deps[3] is not None else 0)
+    t0 = time.time()
+    proc.start()
+    proc.join(budget + 5)
+    if proc.is_alive():
+        proc.terminate()
+        proc.join(5)
+        if proc.is_alive():
+            proc.kill()
+            proc.join()
+        return {'cls': 'timeout', 'reason': 'hard timeout (child killed)',
+                'result': None, 'check': None, 'degenerate': False,
+                'secs': round(time.time() - t0, 3)}
+    if queue.empty():
+        return {'cls': 'error:ChildDied', 'reason': 'child produced no result',
+                'result': None, 'check': None, 'degenerate': False,
+                'secs': round(time.time() - t0, 3)}
+    return queue.get()
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.sympy_path:
         sys.path.insert(0, args.sympy_path)
 
-    from . import corpus, engines
+    from . import corpus, engines, filters
+
+    if args.list_filters:
+        print('filters:')
+        for name in sorted(filters.FILTERS):
+            print('  %s' % name)
+        print('presets:')
+        for name, expansion in sorted(filters.PRESETS.items()):
+            print('  %-22s %s' % (name, ' + '.join(expansion)))
+        return 0
 
     if args.list_engines:
         for name, engine in sorted(engines.registry().items()):
@@ -93,24 +189,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     engine = engines.get(args.engine)
+    active_filters = filters.expand(args.filters)
 
     import sympy
     from sympy import Integral, Piecewise, latex
     from sympy.integrals.risch import NonElementaryIntegral
 
+    check_case = None
     if args.check:
         from .verify import check_case
+    deps = (Integral, Piecewise, NonElementaryIntegral, check_case)
+    runner = evaluate_isolated if args.isolate else evaluate
 
     signal.signal(signal.SIGALRM,
                   lambda s, fr: (_ for _ in ()).throw(TimeoutError()))
 
     print('engine: %s (%s)' % (engine.name, engine.description))
+    if active_filters:
+        print('filters: %s' % ', '.join(active_filters))
     print('sympy:  %s from %s' % (sympy.__version__,
                                   sympy.__file__.rsplit('/', 2)[0]))
 
     stats: Counter = Counter()
     checks: Counter = Counter()
-    n_seen = n_tried = 0
+    n_seen = n_tried = n_filtered = 0
     t0 = time.time()
     results_fh = open(args.results, 'a', encoding='utf-8') \
         if args.results else None
@@ -121,42 +223,26 @@ def main(argv: list[str] | None = None) -> int:
             f, x = case.f, case.x
             if args.concrete_only and f.free_symbols - {x}:
                 continue
+            if active_filters and not filters.accepts(active_filters, f, x):
+                n_filtered += 1
+                continue
             if args.limit is not None and n_tried >= args.limit:
                 break
             n_tried += 1
 
-            t_case = time.time()
-            reason = ''
-            result = None
-            signal.alarm(args.timeout)
-            try:
-                result = engine.call(f, x)
-                cls, degenerate = classify(result, Integral, Piecewise,
-                                           NonElementaryIntegral)
-            except TimeoutError:
-                cls, degenerate = 'timeout', False
-            except NotImplementedError as e:
-                cls, degenerate = 'NIE', False
-                reason = str(e)[:160].replace('\n', ' ')
-            except Exception as e:
-                cls, degenerate = 'error:' + type(e).__name__, False
-                reason = str(e)[:160].replace('\n', ' ')
-            finally:
-                signal.alarm(0)
-            secs = round(time.time() - t_case, 3)
+            outcome = runner(engine, case, args, deps)
+            cls = outcome['cls']
+            secs = outcome['secs']
+            reason = outcome['reason']
+            degenerate = outcome['degenerate']
+            result = outcome['result']
+            check = outcome['check']
             stats[cls] += 1
-
-            check = None
-            if args.check and cls == 'SOLVED':
-                try:
-                    check = check_case(f, x, result, case.expected,
-                                       timeout=args.check_timeout)
-                except Exception as e:
-                    check = {'verdict': 'CHECK-ERROR',
-                             'error': type(e).__name__}
+            if check is not None:
                 checks[check['verdict']] += 1
                 if check['verdict'] == 'WRONG':
-                    print('  WRONG %s[%d] | %s' % (case.suite, case.index, f),
+                    print('  WRONG %s[%d] | %s'
+                          % (case.suite, case.index, case.integrand[:120]),
                           flush=True)
 
             if results_fh:
@@ -167,7 +253,7 @@ def main(argv: list[str] | None = None) -> int:
                 if degenerate:
                     record['degenerate_unevaluated'] = True
                 if result is not None:
-                    record['result'] = str(result)
+                    record['result'] = result
                 if case.integral is not None:
                     record['expected'] = case.integral
                 if check is not None:
@@ -183,7 +269,8 @@ def main(argv: list[str] | None = None) -> int:
             results_fh.close()
 
     dt = time.time() - t0
-    print('\ncases seen %d, attempted %d, %.0f s' % (n_seen, n_tried, dt))
+    print('\ncases seen %d, filtered out %d, attempted %d, %.0f s'
+          % (n_seen, n_filtered, n_tried, dt))
     total = sum(stats.values()) or 1
     for cls, n in stats.most_common():
         print('  %-22s %6d  %5.1f%%' % (cls, n, 100.0 * n / total))
