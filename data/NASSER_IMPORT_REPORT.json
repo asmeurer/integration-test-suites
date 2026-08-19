@@ -1,0 +1,18 @@
+{
+  "hebisch": {
+    "source_file": "10_Hebisch/Hebisch_Problems.py",
+    "upstream": "Hebisch rand3c.input, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+    "rows_in_source": 10335,
+    "cases_written": 10335,
+    "dropped_unparseable_integrand": 0,
+    "answers_dropped_unparseable": 0
+  },
+  "blake": {
+    "source_file": "9_Blake_problems/BlakeProblems.py",
+    "upstream": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+    "rows_in_source": 3154,
+    "cases_written": 3154,
+    "dropped_unparseable_integrand": 0,
+    "answers_dropped_unparseable": 701
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "modules_converted": 198,
+  "cases_written": 66520,
+  "cases_dropped_integrand_not_round_tripping": 0,
+  "answers_dropped_not_round_tripping": 968,
+  "modules_broken_at_import": 13,
+  "broken": [
+    {
+      "module": "rubi_integration_test_suite.t_5_inverse_trig_functions.t_5_1_inverse_sine.t_5_1_2",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_5_inverse_trig_functions.t_5_1_inverse_sine.t_5_1_5",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_5_inverse_trig_functions.t_5_2_inverse_cosine.t_5_2_2",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_7_inverse_hyperbolic_functions.t_7_1_inverse_hyperbolic_sine.t_7_1_2",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_7_inverse_hyperbolic_functions.t_7_1_inverse_hyperbolic_sine.t_7_1_5",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_7_inverse_hyperbolic_functions.t_7_2_inverse_hyperbolic_cosine.t_7_2_2",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_7_inverse_hyperbolic_functions.t_7_2_inverse_hyperbolic_cosine.t_7_2_5",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_1",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_2",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_3",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_4",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_5",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    },
+    {
+      "module": "rubi_integration_test_suite.t_8_special_functions.t_8_6",
+      "error": "AttributeError: 'list' object has no attribute 'is_Float'"
+    }
+  ]
+}

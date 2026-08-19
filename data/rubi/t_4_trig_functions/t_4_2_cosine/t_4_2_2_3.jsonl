@@ -1,0 +1,1 @@
+{"index": 0, "integral": "-a**2*tan(e + f*x)/(c*f) - 3*a**2*atanh(sin(e + f*x))/(c*f) + 4*a**2*sin(e + f*x)/(c*f*(1 - cos(e + f*x)))", "integrand": "(a*cos(e + f*x) + a)**2*sec(e + f*x)**2/(c*cos(e + f*x) - c)", "num_steps": 6, "source": "4 Trig functions/4.2 Cosine/4.2.2.3 (g cos)^p (a+b cos)^m (c+d cos)^n.m", "suite": "rubi", "variable": "x"}
