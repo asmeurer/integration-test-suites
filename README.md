@@ -156,6 +156,18 @@ several cases; every match is printed under its source, and
 `--source-prefix` narrows to one. The same holds for result files: the
 unambiguous per-case key is `(suite, source, index)`.
 
+`--results FILE` selects the cases recorded in a run's results file and
+prints each run record (classification, check verdict, timing, answer)
+under its case; `--cls` keeps only records with that classification or
+check verdict, so the wrong answers of a run are
+
+```console
+$ python -m integration_test_suites.show --results results.jsonl --cls WRONG
+```
+
+and `--cls error` matches every `error:*`. Both flags repeat, and
+selectors given alongside `--results` intersect with it.
+
 ## Duplicates
 
 The suites overlap, and a problem can appear several times within one

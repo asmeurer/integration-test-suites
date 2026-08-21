@@ -6,6 +6,7 @@
     python -m integration_test_suites.show hebisch:274 --format python
     python -m integration_test_suites.show rubi 12 --source-prefix '4 Trig'
     python -m integration_test_suites.show blake --grep '\*\*\(1/3\)' --limit 5
+    python -m integration_test_suites.show --results results.jsonl --cls WRONG
 
 A selector is ``suite[index]``, ``suite:index`` (the same thing without
 the shell-hostile brackets), or a suite name followed by indexes and
@@ -16,6 +17,12 @@ Indexes are unique within the ``hebisch``, ``blake`` and ``mit_bee*``
 suites but only within a *source file* of ``rubi`` and ``independent``,
 so a selector there can match several cases; every match is printed,
 each headed by its source, and ``--source-prefix`` narrows to one.
+
+``--results FILE`` selects the cases recorded in a run's results file
+(``run.py --results``) and prints each run record under its case;
+``--cls`` keeps only records with that classification (``timeout``,
+``partial``, ``error``, ...) or check verdict (``WRONG``, ...).  Given
+together with selectors, the two restrictions intersect.
 """
 from __future__ import annotations
 
@@ -56,7 +63,10 @@ def parse_selectors(tokens: list[str]) -> dict[str, set[int] | None]:
     return {suite: indexes or None for suite, indexes in selected.items()}
 
 
-def select(selected, source_prefix=None, grep=None, limit=None) -> Iterator:
+def select(selected, source_prefix=None, grep=None, limit=None,
+           keys=None) -> Iterator:
+    """Cases of the selected suites, further restricted to the
+    ``(suite, source, index)`` keys in ``keys`` when that is given."""
     from . import corpus
 
     pattern = re.compile(grep) if grep else None
@@ -65,12 +75,49 @@ def select(selected, source_prefix=None, grep=None, limit=None) -> Iterator:
         for case in corpus.load([suite], source_prefix):
             if indexes is not None and case.index not in indexes:
                 continue
+            if keys is not None and \
+                    (case.suite, case.source, case.index) not in keys:
+                continue
             if pattern and not pattern.search(case.integrand):
                 continue
             yield case
             n += 1
             if limit is not None and n >= limit:
                 return
+
+
+def load_results(paths: list[str], labels: list[str] | None = None) -> dict:
+    """Map ``(suite, source, index)`` to the run records found in the
+    given results files, each record tagged with the file it came from.
+
+    ``labels`` keeps only records whose ``cls`` or check verdict is one
+    of them; a label without a colon also matches ``cls`` values of the
+    form ``label:detail`` (so ``error`` matches every ``error:*``).
+    """
+    import json
+    import os
+
+    def accepted(record):
+        if not labels:
+            return True
+        cls = record.get('cls', '')
+        verdict = (record.get('check') or {}).get('verdict', '')
+        return any(label in (cls, verdict) or cls.startswith(label + ':')
+                   for label in labels)
+
+    found: dict = {}
+    for path in paths:
+        tag = os.path.basename(path)
+        with open(path, encoding='utf-8') as fh:
+            for line in fh:
+                if not line.strip():
+                    continue
+                record = json.loads(line)
+                if not accepted(record):
+                    continue
+                key = (record['suite'], record['source'], record['index'])
+                found.setdefault(key, []).append(dict(record, file=tag))
+    return found
 
 
 def _integral(case):
@@ -81,10 +128,29 @@ def _integral(case):
     return Integral(case.f, case.x)
 
 
-def render(case, fmt: str) -> str:
+def _run_summary(record) -> str:
+    verdict = (record.get('check') or {}).get('verdict')
+    parts = [record['file'], record.get('engine', '?'), record.get('cls', '?')]
+    if verdict:
+        parts.append(verdict)
+    if record.get('reason'):
+        parts.append(record['reason'])
+    if 'secs' in record:
+        parts.append('%.2fs' % record['secs'])
+    return ' '.join(parts)
+
+
+def render(case, fmt: str, runs: list[dict] | None = None) -> str:
     head = '%s[%d]  %s' % (case.suite, case.index, case.source)
+    runs = runs or []
     if fmt == 'json':
-        return case.to_json()
+        import json
+
+        if not runs:
+            return case.to_json()
+        record = json.loads(case.to_json())
+        record['runs'] = runs
+        return json.dumps(record, ensure_ascii=False, sort_keys=True)
     if fmt == 'text':
         lines = [head, '  integrand: %s' % case.integrand,
                  '  variable:  %s' % case.variable]
@@ -98,25 +164,38 @@ def render(case, fmt: str) -> str:
             lines.append('  value:     %s' % case.value)
         if case.num_steps is not None:
             lines.append('  num_steps: %d' % case.num_steps)
+        for run in runs:
+            lines.append('  run:       %s' % _run_summary(run))
+            if run.get('result') is not None:
+                lines.append('    result:  %s' % run['result'])
         return '\n'.join(lines)
     if fmt == 'pretty':
-        from sympy import pretty
+        from sympy import pretty, sympify
 
         parts = [head, pretty(_integral(case))]
         if case.expected is not None:
             parts += ['=', pretty(case.expected)]
         if case.expected_value is not None:
             parts += ['=', pretty(case.expected_value)]
+        for run in runs:
+            parts.append('run: %s' % _run_summary(run))
+            if run.get('result') is not None:
+                parts.append(pretty(sympify(run['result'])))
         return '\n'.join(parts)
     if fmt == 'latex':
-        from sympy import latex
+        from sympy import latex, sympify
 
         out = latex(_integral(case))
         if case.expected is not None:
             out += ' = ' + latex(case.expected)
         if case.expected_value is not None:
             out += ' = ' + latex(case.expected_value)
-        return '%s\n%s' % (head, out)
+        lines = [head, out]
+        for run in runs:
+            lines.append('run: %s' % _run_summary(run))
+            if run.get('result') is not None:
+                lines.append(latex(sympify(run['result'])))
+        return '\n'.join(lines)
     if fmt == 'python':
         # A self-contained snippet: sympify the stored strings (so that
         # `x` and any constants are the symbols the corpus means), then
@@ -134,6 +213,10 @@ def render(case, fmt: str) -> str:
             lines.append('# expected: %s' % case.integral)
         if case.value is not None:
             lines.append('# expected value: %s' % case.value)
+        for run in runs:
+            lines.append('# run: %s' % _run_summary(run))
+            if run.get('result') is not None:
+                lines.append('#   result: %s' % run['result'])
         return '\n'.join(lines)
     raise ValueError('unknown format %r' % fmt)
 
@@ -144,9 +227,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         description=__doc__.split('\n\n')[0],
         epilog='Selectors: SUITE, SUITE INDEX..., SUITE LO-HI, SUITE:INDEX, '
                'or SUITE[INDEX] (quote the brackets in zsh).')
-    p.add_argument('selectors', nargs='+', metavar='SELECTOR',
+    p.add_argument('selectors', nargs='*', metavar='SELECTOR',
                    help='a suite name, an index or LO-HI range of the '
-                        'preceding suite, or suite[index] / suite:index')
+                        'preceding suite, or suite[index] / suite:index; '
+                        'optional when --results is given')
+    p.add_argument('--results', action='append', dest='results', default=[],
+                   metavar='FILE',
+                   help='select the cases recorded in this results file '
+                        '(written by run.py --results) and print each run '
+                        'record under its case; repeatable')
+    p.add_argument('--cls', action='append', dest='labels', default=[],
+                   metavar='LABEL',
+                   help='with --results, keep only records whose '
+                        'classification (SOLVED, partial, timeout, error, '
+                        '...) or check verdict (WRONG, DERIV-OK, ...) is '
+                        'LABEL; repeatable, combined with or')
     p.add_argument('--source-prefix',
                    help='restrict to cases whose source starts with this '
                         '(needed to pick one of several rubi/independent '
@@ -172,11 +267,24 @@ def main(argv: list[str] | None = None) -> int:
 
     from . import corpus
 
+    if not args.selectors and not args.results:
+        print('error: give a selector or --results FILE', file=sys.stderr)
+        return 2
+    if args.labels and not args.results:
+        print('error: --cls needs --results', file=sys.stderr)
+        return 2
     try:
         selected = parse_selectors(args.selectors)
     except ValueError as e:
         print('error: %s' % e, file=sys.stderr)
         return 2
+    runs = keys = None
+    if args.results:
+        runs = load_results(args.results, args.labels)
+        keys = set(runs)
+        if not args.selectors:
+            selected = {suite: None
+                        for suite in sorted({k[0] for k in keys})}
     unknown = [s for s in selected if s not in corpus.suites()]
     if unknown:
         print('error: no such suite: %s (have: %s)'
@@ -186,10 +294,12 @@ def main(argv: list[str] | None = None) -> int:
 
     seen: dict[str, set[int]] = {s: set() for s in selected}
     n = 0
-    for case in select(selected, args.source_prefix, args.grep, args.limit):
+    for case in select(selected, args.source_prefix, args.grep, args.limit,
+                       keys):
         if n and args.format != 'json':
             print()
-        print(render(case, args.format))
+        case_runs = runs and runs.get((case.suite, case.source, case.index))
+        print(render(case, args.format, case_runs))
         seen[case.suite].add(case.index)
         n += 1
 

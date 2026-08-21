@@ -89,3 +89,54 @@ def test_missing_index_is_reported(capsys):
 def test_unknown_suite(capsys):
     assert show.main(['nosuch', '1']) == 2
     assert 'no such suite' in capsys.readouterr().err
+
+
+@pytest.fixture
+def results_file(tmp_path):
+    records = [
+        {'suite': 'hebisch', 'source': 'Hebisch rand3c.input, via 12000.org '
+         'SYMPY_syntax.zip (Summer 2021)', 'index': 274, 'engine': 'risch',
+         'cls': 'error:ValueError', 'reason': 'boom', 'secs': 0.1},
+        {'suite': 'hebisch', 'source': 'Hebisch rand3c.input, via 12000.org '
+         'SYMPY_syntax.zip (Summer 2021)', 'index': 3, 'engine': 'risch',
+         'cls': 'SOLVED', 'reason': '', 'secs': 0.2, 'result': 'x**2',
+         'check': {'verdict': 'WRONG'}},
+        {'suite': 'hebisch', 'source': 'Hebisch rand3c.input, via 12000.org '
+         'SYMPY_syntax.zip (Summer 2021)', 'index': 4, 'engine': 'risch',
+         'cls': 'SOLVED', 'reason': '', 'secs': 0.3, 'result': 'x',
+         'check': {'verdict': 'DERIV-OK'}},
+    ]
+    path = tmp_path / 'results.jsonl'
+    path.write_text(''.join(json.dumps(r) + '\n' for r in records))
+    return str(path)
+
+
+def test_results_selects_recorded_cases(results_file, capsys):
+    assert show.main(['--results', results_file, '--format', 'json']) == 0
+    records = [json.loads(l) for l in capsys.readouterr().out.splitlines()]
+    assert [r['index'] for r in records] == [3, 4, 274]
+    assert records[0]['runs'][0]['check']['verdict'] == 'WRONG'
+    assert records[0]['runs'][0]['file'] == 'results.jsonl'
+
+
+def test_results_cls_matches_verdict_or_classification(results_file, capsys):
+    assert show.main(['--results', results_file, '--cls', 'WRONG']) == 0
+    out = capsys.readouterr().out
+    assert out.startswith('hebisch[3]') and 'hebisch[4]' not in out
+    assert '  run:       results.jsonl risch SOLVED WRONG 0.20s' in out
+    assert '    result:  x**2' in out
+    assert show.main(['--results', results_file, '--cls', 'error']) == 0
+    out = capsys.readouterr().out
+    assert out.startswith('hebisch[274]') and 'error:ValueError boom' in out
+
+
+def test_results_intersects_with_selectors(results_file, capsys):
+    assert show.main(['--results', results_file, 'hebisch', '4', '274']) == 0
+    out = capsys.readouterr().out
+    assert out.startswith('hebisch[4]') and 'hebisch[274]' in out
+    assert 'hebisch[3]' not in out
+
+
+def test_cls_requires_results(capsys):
+    assert show.main(['hebisch', '3', '--cls', 'WRONG']) == 2
+    assert show.main([]) == 2
