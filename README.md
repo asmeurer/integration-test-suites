@@ -17,7 +17,7 @@ integration test suite it maintains itself.
 
 ## The corpus
 
-80,063 problems, most of them with a known antiderivative.
+80,607 problems, most of them with a known answer.
 
 | Suite | Cases | What it is |
 | --- | ---: | --- |
@@ -25,7 +25,14 @@ integration test suite it maintains itself.
 | [`hebisch`](data/hebisch/PROVENANCE.md) | 10,335 | Random exp-log integrands guaranteed to be elementary |
 | [`blake`](data/blake/PROVENANCE.md) | 3,154 | Algebraic: pseudo-elliptic, hyperelliptic, nested radicals |
 | [`independent`](data/independent/PROVENANCE.md) | 1,780 | 12 classic sets: Timofeev, Apostol, Moses, Bronstein, ... |
+| [`mit_bee_official`](data/mit_bee_official/PROVENANCE.md) | 544 | Every posted MIT Integration Bee problem, with official answers |
 | [`mit_bee`](data/mit_bee/PROVENANCE.md) | 54 | MIT Integration Bee problems SymPy could not do |
+
+`mit_bee_official` is the corpus' definite-integral section: 262 of its
+cases are definite integrals — many only meaningful as such (floor
+functions, infinite products, symmetric-interval tricks) — which is what
+exercises SymPy's definite machinery (`meijerint`) rather than the
+antiderivative engines.
 
 Two of these are worth singling out, because they test things Rubi does
 not. The `hebisch` suite is built so that every integrand is the expanded
@@ -54,6 +61,17 @@ corpus is loaded far more often than it is evaluated. `num_steps` is
 Rubi's own step count, passed through verbatim. `integral` is absent when
 the suite gives no answer, or gave one that does not parse.
 
+A *definite* case additionally carries `lower` and `upper` (sympy-syntax
+bounds, e.g. `"0"`, `"pi/2"`, `"-oo"`) and `value`, the expected value of
+the definite integral; `integral` keeps meaning an antiderivative and is
+normally absent on such cases:
+
+```json
+{"index": 7, "integrand": "floor(2023*sin(x))", "lower": "0", "upper": "2*pi",
+ "value": "-pi", "source": "MIT Integration Bee 2023 qualifier, problem 8",
+ "suite": "mit_bee_official", "variable": "x"}
+```
+
 ```python
 from integration_test_suites import corpus
 
@@ -69,10 +87,19 @@ heurisch           sympy.integrals.heurisch (None as Integral)   ok
 integrate          sympy's integrate()                           ok
 integrate_norisch  sympy's integrate() with risch=False          ok
 manualintegrate    sympy.integrals.manualintegrate               ok
+meijerint          sympy.integrals.meijerint (definite cases only) ok
 risch              sympy.integrals.risch.risch_integrate         ok
 risch_algebraic    risch_integrate(algebraic=True)               UNAVAILABLE: ...
 rubi               rubi-integrate (Rubi rule set on sympy)       UNAVAILABLE: ...
 ```
+
+Definite cases are dispatched to an engine's definite entry point
+(`integrate` and `meijerint` have one); an engine without one skips them,
+counted separately rather than failed. Deliberately, no engine falls back
+to evaluating its antiderivative at the bounds: an antiderivative with a
+branch jump inside the interval is correct as an antiderivative and wrong
+as a definite value, and the two measurements must not be conflated.
+`--definite-only` / `--indefinite-only` restrict a run to one kind.
 
 ```console
 $ python -m integration_test_suites.run --engine integrate --suite mit_bee \
@@ -97,7 +124,11 @@ if you only sample where the radicands are positive. Symbolic constants
 are instantiated over several rounds (positive, mixed-sign, negative,
 irrational, complex) and the worst verdict wins. The suite's expected
 answer is used only for secondary classification, so a mistranslated
-expected answer cannot produce a false `WRONG`.
+expected answer cannot produce a false `WRONG`. A solved definite case is
+checked by comparing the returned constant against the suite's stated
+value at two precisions, falling back to numerical quadrature of the
+integrand when they disagree or no value is stated — so here too a wrong
+stated value cannot convict a right answer.
 
 `rubi` is [Francesco Bonazzi's `rubi-integrate`](https://github.com/Upabjojr/rubi-integrate),
 the Rubi rule set running on SymPy; `pip install rubi-integrate` to enable it.
@@ -130,6 +161,7 @@ upstream source to `data/`, and record what they dropped:
 | `from_rubi_modules.py` | `rubi`, `independent` | a checkout of [rubi-integration-test-suite](https://github.com/Upabjojr/rubi-integration-test-suite) |
 | `from_nasser_sympy.py` | `hebisch`, `blake` | the extracted `SYMPY_syntax.zip` from [12000.org](https://www.12000.org/my_notes/CAS_integration_tests/) |
 | `mit_bee.py` | `mit_bee` | nothing; the problems are embedded verbatim |
+| `mit_bee_official.py` | `mit_bee_official` | nothing; the transcription is embedded verbatim |
 
 `data/rubi/IMPORT_REPORT.json` and `data/NASSER_IMPORT_REPORT.json` record
 the per-run counts. The Rubi import currently drops 968 expected
@@ -149,17 +181,28 @@ suite directory; nothing else depends on it. `blake` and `hebisch` both
 have replacement paths that need nobody's permission, described in their
 provenance files.
 
+`mit_bee_official` is this repository's own transcription of the problem
+sets MIT publishes as course material without a stated license; it does
+not depend on Nasser's transcriptions.
+
 See [`licenses/README.md`](licenses/README.md) for the details, including
 the position on problems transcribed from books still in copyright.
 
 ## AI generation disclosure
 
 The tooling, importers, tests and documentation in this repository were
-written with Claude Code (Claude Opus 5). The problem data is not
-AI-generated: it is mechanically converted from the upstream sources named
-in each suite's `PROVENANCE.md`, and `verify.py` is the numerical oracle
-developed for SymPy's Risch work. This note is here because the repository
-is intended for the SymPy organization, whose
+written with Claude Code (Claude Opus 5 and Claude Fable 5). The problem
+data is not AI-generated: it is mechanically converted from the upstream
+sources named in each suite's `PROVENANCE.md`, and `verify.py` is the
+numerical oracle developed for SymPy's Risch work. One suite is an
+exception in mechanism: `mit_bee_official` was transcribed by Claude
+reading the rendered PDFs (there is no machine-readable upstream), with
+the transcription embedded verbatim in its importer and audited by
+`validate.py` — every expected answer is proved against its integrand
+symbolically or by quadrature, so a mistranscription surfaces as an
+unproven or mismatched case rather than silently wrong test data. This
+note is here because the repository is intended for the SymPy
+organization, whose
 [policy on AI-generated code](https://docs.sympy.org/dev/contributing/ai-generated-code-policy.html)
 requires it.
 

@@ -39,9 +39,17 @@ CANONICAL_VAR = Symbol('_integration_variable')
 
 
 def canonical_key(case: IntegrationTestCase) -> str:
-    """A hash of the integrand, canonical in the integration variable."""
+    """A hash of the integrand, canonical in the integration variable.
+
+    A definite case hashes its bounds too, so the same integrand as an
+    indefinite problem and over an interval stay distinct problems.
+    """
     normalized = case.f.xreplace({case.x: CANONICAL_VAR})
-    return hashlib.sha256(srepr(normalized).encode('utf-8')).hexdigest()[:32]
+    text = srepr(normalized)
+    if case.is_definite:
+        a, b = case.bounds
+        text += '|%s|%s' % (srepr(a), srepr(b))
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()[:32]
 
 
 def build(progress_every: int = 5000) -> dict:

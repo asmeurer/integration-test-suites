@@ -19,6 +19,12 @@ numerical oracle in :mod:`integration_test_suites.verify`, which decides
 whether the answer really is an antiderivative of the integrand and,
 where the suite supplies one, how it relates to the expected answer.
 
+Definite cases (those with bounds) are dispatched to the engine's
+``call_definite`` entry point and their solved values are checked
+against the suite's stated value, falling back to numerical quadrature.
+Cases the engine has no entry point for are skipped and counted, not
+failed.
+
 Usage:
     python -m integration_test_suites.run --engine integrate \\
         --suite mit_bee --timeout 20 --check
@@ -49,6 +55,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    help='per-case time limit in seconds (default: 10)')
     p.add_argument('--concrete-only', action='store_true',
                    help='skip cases with symbolic constants')
+    p.add_argument('--definite-only', action='store_true',
+                   help='attempt only definite cases')
+    p.add_argument('--indefinite-only', action='store_true',
+                   help='attempt only indefinite cases')
     p.add_argument('--filter', action='append', dest='filters', default=[],
                    help='named case filter or preset; repeatable, combined '
                         'with and. See --list-filters')
@@ -89,14 +99,18 @@ def classify(result, Integral, Piecewise, NonElementaryIntegral):
 
 def evaluate(engine, case, args, deps) -> dict:
     """Run one case and classify it; the unit of work --isolate forks."""
-    Integral, Piecewise, NonElementaryIntegral, check_case = deps
+    Integral, Piecewise, NonElementaryIntegral, checkers = deps
     f, x = case.f, case.x
     out: dict = {'reason': '', 'result': None, 'check': None,
                  'degenerate': False}
     t_case = time.time()
     signal.alarm(args.timeout)
     try:
-        result = engine.call(f, x)
+        if case.is_definite:
+            a, b = case.bounds
+            result = engine.call_definite(f, x, a, b)
+        else:
+            result = engine.call(f, x)
         out['cls'], out['degenerate'] = classify(
             result, Integral, Piecewise, NonElementaryIntegral)
         out['result'] = str(result)
@@ -111,11 +125,17 @@ def evaluate(engine, case, args, deps) -> dict:
     finally:
         signal.alarm(0)
 
-    if check_case is not None and out['cls'] == 'SOLVED':
+    if checkers is not None and out['cls'] == 'SOLVED':
+        check_case, check_value = checkers
         signal.alarm(args.check_timeout)
         try:
-            out['check'] = check_case(f, x, result, case.expected,
-                                      timeout=args.check_timeout)
+            if case.is_definite:
+                a, b = case.bounds
+                out['check'] = check_value(f, x, a, b, result,
+                                           case.expected_value)
+            else:
+                out['check'] = check_case(f, x, result, case.expected,
+                                          timeout=args.check_timeout)
         except TimeoutError:
             out['check'] = {'verdict': 'TIMEOUT'}
         except Exception as e:
@@ -195,10 +215,11 @@ def main(argv: list[str] | None = None) -> int:
     from sympy import Integral, Piecewise, latex
     from sympy.integrals.risch import NonElementaryIntegral
 
-    check_case = None
+    checkers = None
     if args.check:
-        from .verify import check_case
-    deps = (Integral, Piecewise, NonElementaryIntegral, check_case)
+        from .verify import check_case, check_value
+        checkers = (check_case, check_value)
+    deps = (Integral, Piecewise, NonElementaryIntegral, checkers)
     runner = evaluate_isolated if args.isolate else evaluate
 
     signal.signal(signal.SIGALRM,
@@ -212,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
 
     stats: Counter = Counter()
     checks: Counter = Counter()
-    n_seen = n_tried = n_filtered = 0
+    n_seen = n_tried = n_filtered = n_unsupported = 0
     t0 = time.time()
     results_fh = open(args.results, 'a', encoding='utf-8') \
         if args.results else None
@@ -220,6 +241,14 @@ def main(argv: list[str] | None = None) -> int:
     try:
         for case in corpus.load(args.suites, args.source_prefix):
             n_seen += 1
+            if (args.definite_only and not case.is_definite) or \
+                    (args.indefinite_only and case.is_definite):
+                continue
+            supported = engine.call_definite if case.is_definite \
+                else engine.call
+            if supported is None:
+                n_unsupported += 1
+                continue
             f, x = case.f, case.x
             if args.concrete_only and f.free_symbols - {x}:
                 continue
@@ -250,12 +279,17 @@ def main(argv: list[str] | None = None) -> int:
                           'index': case.index, 'engine': engine.name,
                           'integrand': case.integrand, 'latex': latex(f),
                           'cls': cls, 'reason': reason, 'secs': secs}
+                if case.is_definite:
+                    record['lower'] = case.lower
+                    record['upper'] = case.upper
                 if degenerate:
                     record['degenerate_unevaluated'] = True
                 if result is not None:
                     record['result'] = result
                 if case.integral is not None:
                     record['expected'] = case.integral
+                if case.value is not None:
+                    record['expected_value'] = case.value
                 if check is not None:
                     record['check'] = check
                 results_fh.write(json.dumps(record) + '\n')
@@ -271,6 +305,9 @@ def main(argv: list[str] | None = None) -> int:
     dt = time.time() - t0
     print('\ncases seen %d, filtered out %d, attempted %d, %.0f s'
           % (n_seen, n_filtered, n_tried, dt))
+    if n_unsupported:
+        print('skipped %d cases the engine has no entry point for '
+              '(definite vs. indefinite)' % n_unsupported)
     total = sum(stats.values()) or 1
     for cls, n in stats.most_common():
         print('  %-22s %6d  %5.1f%%' % (cls, n, 100.0 * n / total))

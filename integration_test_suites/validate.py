@@ -2,15 +2,19 @@
 """Check the corpus against itself: is every expected answer correct?
 
 For each case that carries an expected antiderivative F, this tries to
-prove D(F) == f symbolically.  It is a one-time audit of the data rather
-than a measurement of any integrator, and it is worth running after any
-change to the importers, because a translation bug shows up here as a
-sudden crop of unproven answers.
+prove D(F) == f symbolically.  For each definite case that carries an
+expected value, it compares the value against numerical quadrature of
+the integrand; a clear disagreement is reported as ``mismatch``.  It is
+a one-time audit of the data rather than a measurement of any
+integrator, and it is worth running after any change to the importers,
+because a translation bug shows up here as a sudden crop of unproven
+answers.
 
 An unproven case is not necessarily wrong: the rewriters are one-sided,
-and a genuinely correct answer in an awkward form can defeat them.  The
-output lists the unproven cases so they can be examined; the numerical
-oracle in :mod:`integration_test_suites.verify` is what settles those.
+quadrature can fail to converge, and a genuinely correct answer in an
+awkward form can defeat them.  The output lists the unproven cases so
+they can be examined; the numerical oracle in
+:mod:`integration_test_suites.verify` is what settles those.
 
 Usage:
     python -m integration_test_suites.validate [--suite blake] \\
@@ -35,19 +39,41 @@ def _init_worker() -> None:
 
 
 def _check_one(task):
-    """(suite, index, integrand, variable, integral, timeout, deep) -> rec."""
-    suite, index, integrand, variable, integral, timeout, deep = task
+    """(suite, index, integrand, variable, integral, bounds_value,
+    timeout, deep) -> rec.
+
+    ``integral`` drives the symbolic derivative proof;
+    ``bounds_value`` is ``(lower, upper, value)`` for a definite case
+    with a stated value, driving the quadrature comparison.  A case
+    carrying both must pass both.
+    """
+    suite, index, integrand, variable, integral, bounds_value, \
+        timeout, deep = task
     from sympy import Symbol, sympify
 
-    from .verify import prove_derivative
+    from .verify import _quad_matches, prove_derivative
 
     signal.alarm(timeout)
+    verdicts = []
     try:
         x = Symbol(variable)
         f = sympify(integrand)
-        F = sympify(integral)
-        step = prove_derivative(f, x, F, deep=deep)
-        verdict = 'proven:' + step if step else 'unproven'
+        if integral is not None:
+            F = sympify(integral)
+            step = prove_derivative(f, x, F, deep=deep)
+            verdicts.append('proven:' + step if step else 'unproven')
+        if bounds_value is not None:
+            lower, upper, value = bounds_value
+            m = _quad_matches(f, x, sympify(lower), sympify(upper),
+                              sympify(value))
+            verdicts.append({'eq': 'proven:quad', 'neq': 'mismatch',
+                             'undecided': 'unproven'}[m])
+        for bad in ('mismatch', 'unproven'):
+            if bad in verdicts:
+                verdict = bad
+                break
+        else:
+            verdict = verdicts[0]
     except TimeoutError:
         verdict = 'timeout'
     except Exception as e:
@@ -55,7 +81,8 @@ def _check_one(task):
     finally:
         signal.alarm(0)
     return {'suite': suite, 'index': index, 'verdict': verdict,
-            'integrand': integrand, 'integral': integral}
+            'integrand': integrand, 'integral': integral,
+            'bounds_value': bounds_value}
 
 
 def _check_one_isolated(task):
@@ -67,7 +94,7 @@ def _check_one_isolated(task):
     """
     import multiprocessing as mp
 
-    timeout = task[5]
+    timeout = task[6]
     ctx = mp.get_context('fork')
     queue = ctx.Queue()
 
@@ -85,10 +112,12 @@ def _check_one_isolated(task):
             proc.kill()
             proc.join()
         return {'suite': task[0], 'index': task[1], 'verdict': 'timeout',
-                'integrand': task[2], 'integral': task[4]}
+                'integrand': task[2], 'integral': task[4],
+                'bounds_value': task[5]}
     if queue.empty():
         return {'suite': task[0], 'index': task[1], 'verdict': 'error:ChildDied',
-                'integrand': task[2], 'integral': task[4]}
+                'integrand': task[2], 'integral': task[4],
+                'bounds_value': task[5]}
     return queue.get()
 
 
@@ -125,13 +154,15 @@ def main(argv=None) -> int:
     tasks = []
     n_no_answer = Counter()
     for seen, case in enumerate(corpus.load(args.suites)):
-        if case.integral is None:
+        bounds_value = (case.lower, case.upper, case.value) \
+            if case.is_definite and case.value is not None else None
+        if case.integral is None and bounds_value is None:
             n_no_answer[case.suite] += 1
             continue
         if seen % shard_n != shard_i:
             continue
         tasks.append((case.suite, case.index, case.integrand, case.variable,
-                      case.integral, args.timeout, args.deep))
+                      case.integral, bounds_value, args.timeout, args.deep))
         if args.limit and len(tasks) >= args.limit:
             break
 
@@ -164,12 +195,12 @@ def main(argv=None) -> int:
 
     print('\nchecked %d answers in %.0f s\n' % (sum(overall.values()),
                                                 time.time() - t0))
-    print('| suite | proven | unproven | timeout | error |')
-    print('|---|---|---|---|---|')
+    print('| suite | proven | unproven | mismatch | timeout | error |')
+    print('|---|---|---|---|---|---|')
     for suite in sorted(per_suite):
         c = per_suite[suite]
-        print('| %s | %d | %d | %d | %d |' % (suite, c['proven'],
-              c['unproven'], c['timeout'], c['error']))
+        print('| %s | %d | %d | %d | %d | %d |' % (suite, c['proven'],
+              c['unproven'], c['mismatch'], c['timeout'], c['error']))
     print('\nby proof step:')
     for verdict, n in overall.most_common():
         print('  %-22s %6d' % (verdict, n))

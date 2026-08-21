@@ -61,6 +61,30 @@ def test_sample_hashes(suite):
         assert len(canonical_key(case)) == 32
 
 
+def test_definite_fields():
+    """The definite section of mit_bee_official parses as advertised."""
+    definite = [case for case in corpus.load(['mit_bee_official'])
+                if case.is_definite]
+    assert definite, 'mit_bee_official has no definite cases'
+    for case in definite[:SAMPLE]:
+        a, b = case.bounds
+        assert isinstance(a, Expr) and isinstance(b, Expr)
+        assert case.integral is None
+        if case.value is not None:
+            assert isinstance(case.expected_value, Expr)
+
+
+def test_definite_bounds_enter_dedupe_key():
+    base = dict(integrand='sin(x)', variable='x', suite='s',
+                source='src', index=0)
+    indefinite = IntegrationTestCase(**base)
+    definite = IntegrationTestCase(lower='0', upper='pi', value='2', **base)
+    other = IntegrationTestCase(lower='0', upper='2*pi', value='0', **base)
+    keys = {canonical_key(indefinite), canonical_key(definite),
+            canonical_key(other)}
+    assert len(keys) == 3
+
+
 @pytest.mark.parametrize('suite', corpus.suites())
 def test_records_round_trip(suite):
     for case in sample_cases(suite):

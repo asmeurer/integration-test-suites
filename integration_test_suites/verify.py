@@ -32,6 +32,13 @@ For parametric cases the check runs once per instantiation round
 (positive / mixed-sign / negative / irrational / complex constants) and
 the aggregate verdict is the worst per-round outcome, where
 WRONG > UNDECIDED-* > DERIV-OK-EXP-BAD > DERIV-OK-SPLIT > ... .
+
+Definite cases go through :func:`check_value` instead: the engine's
+constant is compared against the suite's stated value at two
+precisions, with double-layout numerical quadrature of the integrand
+(:func:`quad_definite`) as the arbiter when they disagree or no value
+is stated.  Verdicts are VALUE-OK / VALUE-OK-QUAD / WRONG /
+UNDECIDED-* / LEAKED-SYMBOLS.
 """
 import signal
 from bisect import bisect
@@ -40,7 +47,7 @@ from sympy import (I, Integral, Mul, Pow, Rational, S, im, nan, oo, re,
                    sqrt, zoo)
 from sympy.core.symbol import Symbol
 
-__all__ = ['check_case', 'prove_derivative']
+__all__ = ['check_case', 'check_value', 'prove_derivative', 'quad_definite']
 
 #: relative tolerance at working precision for "equal"
 EQ_TOL = Rational(1, 10)**25
@@ -231,8 +238,15 @@ def prove_derivative(f, x, F, deep=True):
     difference = diff(F, x) - f
     if difference.is_zero:
         return 'zero'
-    for name, rewrite in (('cancel', cancel),
-                          ('expand', lambda e: cancel(expand(e)))):
+    from sympy import Derivative, Product, Sum
+
+    rewriters = [('cancel', cancel),
+                 ('expand', lambda e: cancel(expand(e)))]
+    if difference.has(Sum, Product, Derivative, Integral):
+        # evaluate unevaluated Sum/Product/Derivative/Integral nodes:
+        # an integrand stated as a series is otherwise unprovable
+        rewriters.append(('doit', lambda e: cancel(e.doit(deep=True))))
+    for name, rewrite in rewriters:
         try:
             if rewrite(difference).is_zero:
                 return name
@@ -242,6 +256,12 @@ def prove_derivative(f, x, F, deep=True):
         try:
             if cancel(fu(difference)).is_zero:
                 return 'fu'
+        except Exception:
+            pass
+        try:
+            from sympy import exp
+            if cancel(difference.rewrite(exp)).is_zero:
+                return 'exp'
         except Exception:
             pass
     if deep:
@@ -368,6 +388,198 @@ def check_answer(f, x, ours, expected, prove=True):
             return {'verdict': 'DERIV-OK-SPLIT', 'used': len(used),
                     'nregions': len(reps)}
     return {'verdict': 'DERIV-OK', 'used': len(used)}
+
+
+def _to_mpmath_bound(bound, dps):
+    """A sympy bound as an mpmath number (mpf, or +/-inf)."""
+    import mpmath
+    if bound == oo:
+        return mpmath.inf
+    if bound == -oo:
+        return -mpmath.inf
+    with mpmath.workdps(dps):
+        return mpmath.mpmathify(str(bound.evalf(dps)))
+
+
+def _quad_breakpoints(f, x):
+    """Real points where ``f`` has branch points or kinks: roots and
+    poles of every radicand, and roots of every Abs/Min/Max argument
+    (and of their pairwise differences, where the kink actually is)."""
+    from sympy import Abs, Max, Min
+
+    from sympy import diff, exp
+
+    bases = list(_radicand_bases(f, x))
+    for node in f.atoms(Abs):
+        bases.append(node.args[0])
+    for node in f.atoms(Min, Max):
+        args = [a for a in node.args if a.has(x)]
+        bases.extend(args)
+        bases.extend(p - q for i, p in enumerate(args)
+                     for q in args[i + 1:])
+    for node in f.atoms(exp):
+        # an exp of a polynomial concentrates the integrand around the
+        # polynomial's critical points; a bump far from the interval
+        # endpoints is invisible to tanh-sinh unless a split point
+        # pins it (exp(-(x - 2024)**2/4) integrates to 0 otherwise)
+        arg = node.args[0]
+        if arg.is_polynomial(x) and arg.has(x):
+            bases.append(diff(arg, x))
+    return _real_breakpoints(bases, x)
+
+
+def quad_definite(f, x, a, b, dps=40, extra_splits=False):
+    """Numerical quadrature of ``f`` over ``(a, b)``.
+
+    Returns ``(value, err)`` as mpmath numbers, where ``err`` is
+    mpmath's own error estimate, or None when the integral cannot be
+    computed this way (free parameters, or quadrature failure).  The
+    interval is split at the real roots and poles of every radicand so
+    that branch points land on subinterval endpoints, where tanh-sinh
+    quadrature tolerates singularities, and at the kinks of Abs/Min/Max.
+
+    ``extra_splits`` adds further interior points, giving a node layout
+    genuinely different from the plain call: callers compare the two
+    runs before trusting either, because a feature that every node
+    misses (a sharp bump far from the cluster points, say) yields a
+    confidently wrong value with a small error estimate.
+    """
+    import mpmath
+    from sympy import lambdify
+
+    if f.free_symbols - {x}:
+        return None
+    try:
+        from sympy import expand_func
+        # binomial, factorial and friends lambdify to gamma ratios that
+        # hit gamma poles at integer quadrature nodes; their expanded
+        # forms are pole-free where the original function is
+        f = expand_func(f)
+    except Exception:
+        pass
+    try:
+        fn = lambdify(x, f, 'mpmath')
+    except Exception:
+        return None
+    with mpmath.workdps(dps):
+        lo, hi = _to_mpmath_bound(a, dps), _to_mpmath_bound(b, dps)
+        interior = set()
+        for r in _quad_breakpoints(f, x):
+            if lo < r < hi:
+                interior.add(mpmath.mpf(r))
+        if extra_splits:
+            # magnitude ladder for infinite tails, thirds for finite
+            # spans; the values only need to differ from the plain run
+            for m in (7, 61, 487, 3989, 32003):
+                for s in (m, -m):
+                    if lo < s < hi:
+                        interior.add(mpmath.mpf(s))
+            if mpmath.isfinite(lo) and mpmath.isfinite(hi):
+                interior.add(lo + (hi - lo)/3)
+                interior.add(lo + 2*(hi - lo)/3)
+        points = [lo] + sorted(interior) + [hi]
+        try:
+            value, err = mpmath.quad(fn, points, error=True)
+        except Exception:
+            return None
+        if not mpmath.isfinite(value):
+            return None
+        return value, err
+
+
+def _quad_matches(f, x, a, b, target, dps=40):
+    """'eq' / 'neq' / 'undecided': does quadrature of f match target?
+
+    ``target`` is a constant sympy expression.  Quadrature runs twice,
+    with different interior split points, and no verdict is issued
+    unless the two runs agree with each other: a localized feature that
+    one node layout misses entirely produces a confidently wrong value
+    (a Gaussian bump thousands of units from the cluster points is
+    invisible to tanh-sinh on an infinite interval), and requiring two
+    disagreeing layouts to concur is what rules that out.  The verdict
+    is 'neq' only when both error estimates are small and the
+    difference is far outside them; loose agreement that cannot be
+    confirmed stays 'undecided', in keeping with the one-sided
+    philosophy of the symbolic provers.
+    """
+    import mpmath
+
+    if target.free_symbols:
+        return 'undecided'
+    got1 = quad_definite(f, x, a, b, dps=dps)
+    if got1 is None:
+        return 'undecided'
+    got2 = quad_definite(f, x, a, b, dps=dps, extra_splits=True)
+    if got2 is None:
+        return 'undecided'
+    with mpmath.workdps(dps):
+        try:
+            tr, ti = target.evalf(dps).as_real_imag()
+            want = mpmath.mpc(mpmath.mpmathify(str(tr.evalf(dps))),
+                              mpmath.mpmathify(str(ti.evalf(dps))))
+            if want.imag == 0:
+                want = want.real
+        except Exception:
+            return 'undecided'
+        (v1, e1), (v2, e2) = got1, got2
+        scale = max(1, abs(v1), abs(v2), abs(want))
+        if abs(v1 - v2) / scale > mpmath.mpf(10)**(-dps//2):
+            # the two node layouts disagree: at least one of them is
+            # not actually converged, whatever its error estimate says
+            return 'undecided'
+        diff = abs(v1 - want)
+        err = max(abs(e1), abs(e2))
+        if diff / scale < mpmath.mpf(10)**(-dps//2) and \
+                err / scale < mpmath.mpf(10)**(-dps//2):
+            return 'eq'
+        if err / scale < mpmath.mpf(10)**-10 and \
+                diff / scale > max(mpmath.mpf(10)**-6, 1000*err/scale):
+            return 'neq'
+        return 'undecided'
+
+
+def check_value(f, x, a, b, ours, expected):
+    """Decide a solved definite case: is ``ours`` the right value?
+
+    ``ours`` is the engine's result, ``expected`` the suite's stated
+    value (or None).  Both are constants; the comparison reuses the
+    two-precision point machinery (substitution is a no-op on a
+    constant).  With no stated value, quadrature of the integrand is
+    the only reference.
+
+    Verdicts: VALUE-OK (matches the stated value), VALUE-OK-QUAD
+    (matches quadrature; no stated value to compare), WRONG,
+    UNDECIDED-NUMERICS, LEAKED-SYMBOLS.
+    """
+    consts = f.free_symbols - {x} | a.free_symbols | b.free_symbols
+    if ours.free_symbols - consts:
+        return {'verdict': 'LEAKED-SYMBOLS',
+                'symbols': sorted(str(s) for s in
+                                  ours.free_symbols - consts)}
+    if consts:
+        # parametric definite cases are not instantiated (bounds and
+        # convergence conditions change with the parameters); nothing
+        # in the MIT-style suites needs it
+        return {'verdict': 'UNDECIDED-NUMERICS', 'reason': 'parametric'}
+    if expected is not None:
+        m = _match_at(ours, expected, x, S.Zero)
+        if m == 'eq':
+            return {'verdict': 'VALUE-OK'}
+        if m == 'neq':
+            # the stated value could itself be wrong; convict only if
+            # quadrature agrees that ours is off
+            q = _quad_matches(f, x, a, b, ours)
+            if q == 'eq':
+                return {'verdict': 'VALUE-OK-QUAD', 'expected_differs': True}
+            if q == 'neq':
+                return {'verdict': 'WRONG'}
+            return {'verdict': 'WRONG', 'unconfirmed_by_quad': True}
+    q = _quad_matches(f, x, a, b, ours)
+    if q == 'eq':
+        return {'verdict': 'VALUE-OK-QUAD'}
+    if q == 'neq':
+        return {'verdict': 'WRONG', 'against': 'quadrature'}
+    return {'verdict': 'UNDECIDED-NUMERICS'}
 
 
 #: instantiation pools, cycled over the sorted constant symbols

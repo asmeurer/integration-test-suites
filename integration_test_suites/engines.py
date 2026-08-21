@@ -6,6 +6,14 @@ Each engine is a name, a one-line description and a callable taking
 whose backing package is not installed report ``available = False``
 instead of raising, so that ``--engine rubi`` fails with a clear message
 rather than an import traceback from deep inside a worker.
+
+``call_definite`` takes ``(integrand, variable, lower, upper)`` and is
+the entry point for definite cases; engines without one (the
+antiderivative-only routines) simply skip those cases.  Evaluating an
+engine's antiderivative at the bounds is deliberately not offered as a
+fallback: an antiderivative with a branch jump inside the interval is
+correct as an antiderivative and wrong as a definite value, and the two
+measurements must not be conflated.
 """
 from __future__ import annotations
 
@@ -20,6 +28,7 @@ class Engine:
     call: Callable
     available: bool = True
     unavailable_reason: str = ''
+    call_definite: Callable | None = None
 
 
 def _sympy_engines() -> list[Engine]:
@@ -35,18 +44,33 @@ def _sympy_engines() -> list[Engine]:
             return Integral(f, x)
         return result
 
+    def meijerint_call(f, x, a, b):
+        from sympy import Integral
+        from sympy.integrals.meijerint import meijerint_definite
+        result = meijerint_definite(f, x, a, b)
+        if result is None:
+            return Integral(f, (x, a, b))
+        value, _cond = result
+        return value
+
     return [
         Engine('integrate', "sympy's integrate()",
-               lambda f, x: integrate(f, x)),
+               lambda f, x: integrate(f, x),
+               call_definite=lambda f, x, a, b: integrate(f, (x, a, b))),
         Engine('integrate_norisch',
                "sympy's integrate() with risch=False",
-               lambda f, x: integrate(f, x, risch=False)),
+               lambda f, x: integrate(f, x, risch=False),
+               call_definite=lambda f, x, a, b:
+                   integrate(f, (x, a, b), risch=False)),
         Engine('manualintegrate', 'sympy.integrals.manualintegrate',
                lambda f, x: manualintegrate(f, x)),
         Engine('heurisch', 'sympy.integrals.heurisch (None as Integral)',
                heurisch_call),
         Engine('risch', 'sympy.integrals.risch.risch_integrate',
                lambda f, x: risch_integrate(f, x)),
+        Engine('meijerint',
+               'sympy.integrals.meijerint (definite cases only)',
+               None, call_definite=meijerint_call),
     ]
 
 
