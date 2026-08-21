@@ -2,7 +2,7 @@
 
 The tooling in this repository is MIT (see the top-level `LICENSE`). The
 problem sets under `data/` come from several places and are covered
-separately, per suite. Each suite directory has its own `PROVENANCE.md`
+separately, per suite. Each suite directory has its own `README.md`
 with the full story; this is the summary.
 
 | Suite | Problems | Origin | License |
@@ -11,6 +11,7 @@ with the full story; this is the summary.
 | `independent` | ~1,800 | The 12 independent sets in Rubi's chapter 0, same route | MIT, as above |
 | `blake` | 3,154 | Sam Blake's algebraic problems, via Nasser Abbasi's translation | Problems MIT (`blake-MIT.txt`); **translation unlicensed** |
 | `hebisch` | 10,335 | Waldek Hebisch's random exp-log problems, via Nasser Abbasi | **Unlicensed** |
+| `mit_bee_official` | 544 | MIT Integration Bee official PDFs, transcribed by this repository | Upstream **unlicensed** course material; transcription MIT with the tooling |
 | `mit_bee` | 54 | MIT Integration Bee, via Nasser Abbasi's post | **Unlicensed** |
 
 ## What is and is not settled
@@ -31,7 +32,7 @@ Two of the three have replacement paths that need nobody's permission:
 - `blake` can be re-translated from the MIT `BlakeProblems.m` upstream
   with the same generator that produced the `rubi` suite.
 - `hebisch` can be regenerated from scratch — the construction is fully
-  documented in `data/hebisch/PROVENANCE.md`, and the original file is
+  documented in `data/hebisch/README.md`, and the original file is
   gone from the web anyway.
 
 ## Problems taken from books and papers

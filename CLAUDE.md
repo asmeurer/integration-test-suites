@@ -8,7 +8,7 @@ the invariants and operational knowledge that are easy to get wrong.
 ## Invariants
 
 - **Every suite stays independently removable.** Each `data/<suite>/`
-  directory is self-contained with its own `PROVENANCE.md`, so any suite can
+  directory is self-contained with its own `README.md`, so any suite can
   be dropped with one `git rm -r`. Never create cross-suite dependencies,
   never merge suites.
 - **Deduplication is non-destructive.** `dedupe.py` writes

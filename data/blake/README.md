@@ -5,6 +5,17 @@ nested-radical integrands — from Sam Blake's work on `IntegrateAlgebraic`.
 This is the natural test set for the algebraic case of the
 Risch-Trager-Bronstein algorithm.
 
+## What it contains
+
+One file, `blake.jsonl`. The integrands are radicals of rational
+functions: quartic and higher radicands whose integrals nevertheless come
+out elementary (pseudo-elliptic cases), nested radicals, and families
+that defeat pattern-matching integrators by construction. 2,453 of the
+cases carry an expected antiderivative; the other 701 answers were in
+Maple `RootSum` lambda syntax that does not sympify and were dropped at
+import (the problems are kept without an expected answer). 1,390 of the
+cases are parametric in one or more symbolic constants.
+
 ## Where these came from
 
 Upstream: [stblake/algebraic_integration](https://github.com/stblake/algebraic_integration)
@@ -16,11 +27,6 @@ The copy here is the SymPy-syntax translation from the Summer 2021 edition
 of Nasser Abbasi's
 [Computer Algebra Independent Integration Tests](https://www.12000.org/my_notes/CAS_integration_tests/),
 imported by `importers/from_nasser_sympy.py`.
-
-701 of the expected antiderivatives use Maple's
-`RootSum(_Z1 -> ..., _Z1 -> ...)` lambda syntax, which is not Python and
-does not sympify. Those answers were dropped; their problems are kept
-without an expected antiderivative.
 
 ## License
 

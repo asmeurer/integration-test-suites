@@ -4,8 +4,8 @@
 The corpus lives in ``data/<suite>/*.jsonl``, one JSON record per line in
 the schema of :class:`~integration_test_suites.case.IntegrationTestCase`,
 and one directory per suite so that a suite can be added or dropped
-without touching any other.  Each suite directory carries a
-``PROVENANCE.md`` recording where its problems came from and under what
+without touching any other.  Each suite directory carries a ``README.md``
+describing its contents, where its problems came from and under what
 license they are redistributed here.
 """
 from __future__ import annotations

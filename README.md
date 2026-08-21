@@ -21,12 +21,12 @@ integration test suite it maintains itself.
 
 | Suite | Cases | What it is |
 | --- | ---: | --- |
-| [`rubi`](data/rubi/PROVENANCE.md) | 64,740 | Albert Rich's Rubi test suite, chapters 1-8 |
-| [`hebisch`](data/hebisch/PROVENANCE.md) | 10,335 | Random exp-log integrands guaranteed to be elementary |
-| [`blake`](data/blake/PROVENANCE.md) | 3,154 | Algebraic: pseudo-elliptic, hyperelliptic, nested radicals |
-| [`independent`](data/independent/PROVENANCE.md) | 1,780 | 12 classic sets: Timofeev, Apostol, Moses, Bronstein, ... |
-| [`mit_bee_official`](data/mit_bee_official/PROVENANCE.md) | 544 | Every posted MIT Integration Bee problem, with official answers |
-| [`mit_bee`](data/mit_bee/PROVENANCE.md) | 54 | MIT Integration Bee problems SymPy could not do |
+| [`rubi`](data/rubi/README.md) | 64,740 | Albert Rich's Rubi test suite, chapters 1-8 |
+| [`hebisch`](data/hebisch/README.md) | 10,335 | Random exp-log integrands guaranteed to be elementary |
+| [`blake`](data/blake/README.md) | 3,154 | Algebraic: pseudo-elliptic, hyperelliptic, nested radicals |
+| [`independent`](data/independent/README.md) | 1,780 | 12 classic sets: Timofeev, Apostol, Moses, Bronstein, ... |
+| [`mit_bee_official`](data/mit_bee_official/README.md) | 544 | Every posted MIT Integration Bee problem, with official answers |
+| [`mit_bee`](data/mit_bee/README.md) | 54 | MIT Integration Bee problems SymPy could not do |
 
 `mit_bee_official` is the corpus' definite-integral section: 262 of its
 cases are definite integrals — many only meaningful as such (floor
@@ -41,8 +41,9 @@ Risch implementation on exponential-logarithmic towers — FriCAS solves
 99.92% of it. The `blake` suite is the corresponding test for the
 algebraic case of Risch-Trager-Bronstein.
 
-Each suite directory carries a `PROVENANCE.md` saying where its problems
-came from and under what license they are redistributed here. Read
+Each suite directory carries a `README.md` describing what the suite
+contains, where its problems came from and under what license they are
+redistributed here. Read
 [`licenses/README.md`](licenses/README.md) before adding or removing
 anything.
 
@@ -193,7 +194,7 @@ the position on problems transcribed from books still in copyright.
 The tooling, importers, tests and documentation in this repository were
 written with Claude Code (Claude Opus 5 and Claude Fable 5). The problem
 data is not AI-generated: it is mechanically converted from the upstream
-sources named in each suite's `PROVENANCE.md`, and `verify.py` is the
+sources named in each suite's `README.md`, and `verify.py` is the
 numerical oracle developed for SymPy's Risch work. One suite is an
 exception in mechanism: `mit_bee_official` was transcribed by Claude
 reading the rendered PDFs (there is no machine-readable upstream), with

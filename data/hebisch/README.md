@@ -12,6 +12,20 @@ with probability 1/2 and an integer 1-5 with probability 1/10 each. The
 integrand is the *expanded derivative* of the generated expression, so
 the expression itself is a known antiderivative.
 
+## What it contains
+
+One file, `hebisch.jsonl`, with all 10,335 cases. Every case is an
+indefinite integral in `x` with no symbolic constants, and every case
+carries its expected antiderivative — by construction, since the
+integrand is the derivative of the recorded expression. The integrands
+are pure exp-log towers: no algebraic functions, no trigonometry (which
+is what makes the suite a direct measure of the transcendental Risch
+algorithm rather than of heuristics).
+
+Two cases are worth knowing about when benchmarking (see the top-level
+CLAUDE.md): index 1692 is hash-seed-dependent in runtime, and index 274
+trips an E-vs-`exp(1/2)` canonicalization bug in SymPy's Risch code.
+
 ## Where these came from
 
 Announced in [this sci.math.symbolic thread](https://groups.google.com/g/sci.math.symbolic/c/f6zYWBa-Y-k)

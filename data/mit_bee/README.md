@@ -6,14 +6,21 @@ integrate, all of them stated to have known antiderivatives.
 These are competition problems: they reward a clever substitution rather
 than a decision procedure, so they measure the breadth of the heuristic
 integrators (`manualintegrate`, `heurisch`) more than they test Risch.
-The list contains one integrand three times, exactly as posted; the
-duplicates are kept rather than silently collapsed, and
+
+## What it contains
+
+One file, `mit_bee.jsonl`, with 54 indefinite integrands in `x` and no
+expected answers — only the integrands were posted, so a runner can
+report whether an engine returns something closed form, but the
+numerical oracle can only check that the answer differentiates back to
+the integrand. The list contains one integrand three times, exactly as
+posted; the duplicates are kept rather than silently collapsed, and
 `../DUPLICATES.json` records them.
 
-Only the integrands were posted, so these cases carry **no expected
-antiderivative** — a runner can report whether an engine returns
-something closed form, but the numerical oracle can only check that the
-answer differentiates back to the integrand.
+The `mit_bee_official` suite covers the same competition from the
+official PDFs, with answers; 26 of these 54 integrands reappear there
+(see `../DUPLICATES.json`), while the rest likely came from bee rounds
+whose problem sets are no longer posted.
 
 ## Where these came from
 

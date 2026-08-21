@@ -106,7 +106,7 @@ def test_every_line_is_valid_json(suite):
 
 
 @pytest.mark.parametrize('suite', corpus.suites())
-def test_provenance_present(suite):
+def test_suite_readme_present(suite):
     import os
-    path = os.path.join(corpus.DATA_DIR, suite, 'PROVENANCE.md')
-    assert os.path.exists(path), 'suite %s has no PROVENANCE.md' % suite
+    path = os.path.join(corpus.DATA_DIR, suite, 'README.md')
+    assert os.path.exists(path), 'suite %s has no README.md' % suite
