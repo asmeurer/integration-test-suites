@@ -134,6 +134,28 @@ stated value cannot convict a right answer.
 `rubi` is [Francesco Bonazzi's `rubi-integrate`](https://github.com/Upabjojr/rubi-integrate),
 the Rubi rule set running on SymPy; `pip install rubi-integrate` to enable it.
 
+## Looking at a case
+
+`show` prints the cases a selector names, which is how a line like
+`WRONG hebisch[274]` in a run's output is followed up:
+
+```console
+$ python -m integration_test_suites.show hebisch 274 1692
+$ python -m integration_test_suites.show hebisch:274 --format python
+$ python -m integration_test_suites.show rubi 12 --source-prefix '4 Trig'
+```
+
+A selector is `suite[index]`, `suite:index`, or a suite name followed by
+indexes and `LO-HI` ranges; a suite name alone streams the whole suite,
+and `--grep REGEX` / `--limit N` cut that down. `--format` chooses `text`
+(the stored strings), `pretty`, `latex`, `json` (the corpus record) or
+`python` (a self-contained reproduction snippet). Indexes are unique
+within `hebisch`, `blake` and the `mit_bee` suites but only within a
+source file of `rubi` and `independent`, so a selector there can match
+several cases; every match is printed under its source, and
+`--source-prefix` narrows to one. The same holds for result files: the
+unambiguous per-case key is `(suite, source, index)`.
+
 ## Duplicates
 
 The suites overlap, and a problem can appear several times within one
