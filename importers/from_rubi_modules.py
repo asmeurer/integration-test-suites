@@ -48,6 +48,18 @@ INDEPENDENT_CHAPTER = 't_0_independent_test_suites'
 #: answer containing any of these is not an expression and is dropped.
 MARKER_HEADS = frozenset({'Unintegrable', 'CannotIntegrate', 'Int'})
 
+#: Cases excluded from the corpus entirely, keyed by (jsonl basename,
+#: upstream index).  The two Welz problems carry a literal ``0`` as
+#: their upstream expected antiderivative — a placeholder like the
+#: marker heads, but indistinguishable from a real answer once emitted
+#: (the answer audit convicted both) — so the problems sit out until a
+#: real reference antiderivative exists.  Skipping does not renumber:
+#: ``index`` is the upstream enumeration position.
+SKIP_CASES = frozenset({
+    ('welz_problems.jsonl', 56),
+    ('welz_problems.jsonl', 78),
+})
+
 _HANDLERS = None
 
 
@@ -207,8 +219,12 @@ def main() -> None:
         out_path = os.path.join(data_dir, suite, relpath)
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
         written = 0
+        skip_key = os.path.basename(relpath)
         with open(out_path, 'w', encoding='utf-8') as fh:
             for index, case in enumerate(cases):
+                if (skip_key, index) in SKIP_CASES:
+                    stats['cases_skipped'] += 1
+                    continue
                 record = convert(case, suite, source, index, stats)
                 if record is None:
                     continue
@@ -233,6 +249,7 @@ def main() -> None:
         'answers_translated': stats['answers_translated'],
         'integrands_translated': stats['integrands_translated'],
         'untranslated_heads_remaining': leftover,
+        'cases_skipped': stats['cases_skipped'],
         'modules_broken_at_import': n_broken,
         'broken': broken,
     }

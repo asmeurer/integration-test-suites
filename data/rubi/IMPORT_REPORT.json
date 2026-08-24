@@ -1,8 +1,17 @@
 {
   "modules_converted": 198,
-  "cases_written": 66520,
+  "cases_written": 66518,
   "cases_dropped_integrand_not_round_tripping": 0,
-  "answers_dropped_not_round_tripping": 968,
+  "answers_dropped_not_round_tripping": 964,
+  "answers_dropped_unintegrable_marker": 2756,
+  "answers_translated": 8506,
+  "integrands_translated": 653,
+  "untranslated_heads_remaining": {
+    "F": 18,
+    "F0": 4,
+    "PolyGamma": 1
+  },
+  "cases_skipped": 2,
   "modules_broken_at_import": 13,
   "broken": [
     {
