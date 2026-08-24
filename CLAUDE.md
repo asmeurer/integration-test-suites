@@ -19,6 +19,10 @@ the invariants and operational knowledge that are easy to get wrong.
   JSONL.** The importers are the reproducible path from each upstream source
   to `data/`, and their import reports record what was dropped. A data fix
   belongs in the importer (rerun it), not in the data files.
+  `importers/regenerate.py` rebuilds everything with one command, and every
+  correction table self-verifies at import time (corrected answers must
+  prove, skips must still match their recorded reason), so an upstream
+  update is a rerun plus the audit, never a manual re-check.
 - **Licensing is per-suite and delicate.** Three suites (`hebisch`, `blake`,
   `mit_bee`) are Nasser Abbasi's transcriptions with no stated license,
   included pending his agreement — that contact is the maintainer's to make,

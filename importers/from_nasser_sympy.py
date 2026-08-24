@@ -31,6 +31,13 @@ constant offset off the principal strip and so are wrong as
 antiderivatives there.  The corrected forms prove exactly:
 ``cancel(diff(F) - f) == 0``.
 
+The source zip is frozen upstream (the Summer 2021 edition; Hebisch's
+original site is gone), so these suites regenerate byte-identically.
+The site refuses non-browser user agents; download with:
+
+    curl -A "Mozilla/5.0" -O https://www.12000.org/my_notes/\
+CAS_integration_tests/reports/summer_2021/input/SYMPY_syntax.zip
+
 Usage:
     python importers/from_nasser_sympy.py <path-to-extracted-SYMPY-dir>
 """
@@ -74,6 +81,27 @@ LOG_EXP_UNWRAP = frozenset({
 ANSWER_OVERRIDES = {
     8737: 'x*(3-(x-24+ln(-ln(2)-I*pi))*x)',
 }
+
+
+def check_correction(integrand: str, variable: str, answers: list,
+                     index: int) -> None:
+    """Prove a corrected answer before letting it into the corpus.
+
+    Every correction table entry must yield an answer with
+    ``cancel(diff(F) - f) == 0`` exactly; anything else means the
+    upstream source shifted under the table (or a correction is wrong),
+    and the import fails loudly instead of emitting bad test data.
+    """
+    from sympy import Symbol, cancel, diff, sympify
+
+    x = Symbol(variable)
+    f = sympify(integrand)
+    for text in answers:
+        residual = cancel(diff(sympify(text), x) - f)
+        if not residual.is_zero:
+            raise RuntimeError(
+                'corrected hebisch answer %d does not prove: '
+                'cancel(diff(F) - f) = %s' % (index, str(residual)[:120]))
 
 
 def unwrap_log_exp(text: str) -> str:
@@ -141,9 +169,17 @@ def main() -> None:
                 answers = [a for a in row[3:] if isinstance(a, str)]
                 if suite == 'hebisch' and index in ANSWER_OVERRIDES:
                     answers = [ANSWER_OVERRIDES[index]]
+                    check_correction(integrand, str(row[1]), answers, index)
                     n_corrected += 1
                 elif suite == 'hebisch' and index in LOG_EXP_UNWRAP:
-                    answers = [unwrap_log_exp(a) for a in answers]
+                    unwrapped = [unwrap_log_exp(a) for a in answers]
+                    if unwrapped == answers:
+                        raise RuntimeError(
+                            'LOG_EXP_UNWRAP entry %d changed nothing; the '
+                            'upstream source no longer matches the table'
+                            % index)
+                    answers = unwrapped
+                    check_correction(integrand, str(row[1]), answers, index)
                     n_corrected += 1
                 good = [a for a in answers if parses(a)]
                 n_bad_integral += len(answers) - len(good)

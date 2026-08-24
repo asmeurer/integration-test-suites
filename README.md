@@ -192,12 +192,27 @@ merely mathematically equal.
 The importers under `importers/` are the reproducible path from each
 upstream source to `data/`, and record what they dropped:
 
+The whole corpus regenerates with one command — no manual steps, so an
+upstream update (a new Rubi release, say) is a rerun, not a re-audit:
+
+```console
+$ python importers/regenerate.py --rubi ../rubi-integration-test-suite
+```
+
 | Importer | Produces | Needs |
 | --- | --- | --- |
 | `from_rubi_modules.py` | `rubi`, `independent` | a checkout of [rubi-integration-test-suite](https://github.com/Upabjojr/rubi-integration-test-suite) |
-| `from_nasser_sympy.py` | `hebisch`, `blake` | the extracted `SYMPY_syntax.zip` from [12000.org](https://www.12000.org/my_notes/CAS_integration_tests/) |
+| `from_nasser_sympy.py` | `hebisch`, `blake` | the extracted `SYMPY_syntax.zip` from [12000.org](https://www.12000.org/my_notes/CAS_integration_tests/) (frozen upstream; the driver downloads it) |
 | `mit_bee.py` | `mit_bee` | nothing; the problems are embedded verbatim |
 | `mit_bee_official.py` | `mit_bee_official` | nothing; the transcription is embedded verbatim |
+
+The importers carry their own correction tables, and every correction is
+verified at import time — a corrected antiderivative must prove
+(`cancel(diff(F) - f) == 0`) and a skipped case must still match what
+the skip was recorded for, so upstream data shifting under a table fails
+the run loudly instead of emitting bad test data. After regenerating,
+run `pytest` and the answer audit
+(`python -m integration_test_suites.validate`).
 
 `data/rubi/IMPORT_REPORT.json` and `data/NASSER_IMPORT_REPORT.json` record
 the per-run counts. The Rubi import translates the Mathematica heads the

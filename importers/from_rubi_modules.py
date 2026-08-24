@@ -54,11 +54,25 @@ MARKER_HEADS = frozenset({'Unintegrable', 'CannotIntegrate', 'Int'})
 #: marker heads, but indistinguishable from a real answer once emitted
 #: (the answer audit convicted both) — so the problems sit out until a
 #: real reference antiderivative exists.  Skipping does not renumber:
-#: ``index`` is the upstream enumeration position.
+#: ``index`` is the upstream enumeration position.  Each skip is
+#: verified against the upstream case at import time, so an upstream
+#: update that moves or fixes these cases fails the import loudly
+#: instead of silently skipping the wrong problem; a zero answer on any
+#: *other* case is dropped as a placeholder and counted in the report.
 SKIP_CASES = frozenset({
     ('welz_problems.jsonl', 56),
     ('welz_problems.jsonl', 78),
 })
+
+
+def check_skip(case, skip_key: str, index: int) -> None:
+    """Assert a SKIP_CASES entry still points at a zero-placeholder."""
+    if str(case.integral) != '0':
+        raise RuntimeError(
+            'SKIP_CASES entry (%r, %d) no longer matches a literal-0 '
+            'expected answer (found %r); the upstream suite changed -- '
+            're-triage this case instead of skipping it'
+            % (skip_key, index, str(case.integral)[:80]))
 
 _HANDLERS = None
 
@@ -163,6 +177,11 @@ def convert(case, suite: str, source: str, index: int, stats):
     if case.integral is not None:
         if undefined_heads(case.integral) & MARKER_HEADS:
             stats['answers_dropped_unintegrable_marker'] += 1
+        elif case.integral.is_zero and not case.integrand.is_zero:
+            # a literal 0 "antiderivative" of a nonzero integrand is a
+            # placeholder (SKIP_CASES excludes the known ones outright;
+            # any new one from an upstream update is dropped here)
+            stats['answers_dropped_zero_placeholder'] += 1
         else:
             expected = translate_heads(case.integral)
             if expected != case.integral:
@@ -223,6 +242,7 @@ def main() -> None:
         with open(out_path, 'w', encoding='utf-8') as fh:
             for index, case in enumerate(cases):
                 if (skip_key, index) in SKIP_CASES:
+                    check_skip(case, skip_key, index)
                     stats['cases_skipped'] += 1
                     continue
                 record = convert(case, suite, source, index, stats)
@@ -250,6 +270,8 @@ def main() -> None:
         'integrands_translated': stats['integrands_translated'],
         'untranslated_heads_remaining': leftover,
         'cases_skipped': stats['cases_skipped'],
+        'answers_dropped_zero_placeholder':
+            stats['answers_dropped_zero_placeholder'],
         'modules_broken_at_import': n_broken,
         'broken': broken,
     }

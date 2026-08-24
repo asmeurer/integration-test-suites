@@ -12,6 +12,7 @@
     "PolyGamma": 1
   },
   "cases_skipped": 2,
+  "answers_dropped_zero_placeholder": 0,
   "modules_broken_at_import": 13,
   "broken": [
     {
