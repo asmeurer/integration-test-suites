@@ -222,7 +222,12 @@ def prove_derivative(f, x, F, deep=True):
     Returns the name of the step that settled it, or None if none did.
     ``cancel`` alone decides the large majority of cases and is fast; the
     trigonometric simplifier is tried only when the difference actually
-    contains trigonometric functions, and ``simplify`` only as a last
+    contains trigonometric functions.  After those, the sound rewrite
+    steps of :mod:`integration_test_suites.proofsteps` run cheapest
+    first: exponent splitting, the polylog/LambertW identities, argument
+    normalization, the exp/log flattening that reconciles ``F**u`` with
+    ``exp`` forms, the 2F1 contiguous reduction, and the
+    algebraic-number coefficient test.  ``simplify`` runs only as a last
     resort, since it is by far the expensive one -- pass ``deep=False``
     to stop before it and keep the check cheap over a whole corpus.
 
@@ -258,12 +263,45 @@ def prove_derivative(f, x, F, deep=True):
                 return 'fu'
         except Exception:
             pass
+
+    from sympy import LambertW, hyper, polylog, powsimp
+
+    from . import proofsteps as ps
+    try:
+        if cancel(powsimp(difference, combine='exp')).is_zero:
+            return 'powsimp'
+        if cancel(expand(ps.powsplit(difference), mul=True)).is_zero:
+            return 'powsplit'
+    except Exception:
+        pass
+    if difference.has(polylog, LambertW):
         try:
-            from sympy import exp
-            if cancel(difference.rewrite(exp)).is_zero:
-                return 'exp'
+            if ps.killzero(ps.special_rewrites(difference)):
+                return 'special'
         except Exception:
             pass
+    try:
+        normalized = ps.argnorm(ps.special_rewrites(difference))
+        if cancel(normalized).is_zero:
+            return 'argnorm'
+    except Exception:
+        normalized = difference
+    try:
+        if ps.killzero(ps.powexp(normalized)):
+            return 'powexp'
+    except Exception:
+        pass
+    if difference.has(hyper):
+        try:
+            if ps.hyperzero(normalized):
+                return 'hyper2f1'
+        except Exception:
+            pass
+    try:
+        if ps.numzero(normalized):
+            return 'numzero'
+    except Exception:
+        pass
     if deep:
         try:
             if simplify(difference).is_zero:
