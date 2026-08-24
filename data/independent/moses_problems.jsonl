@@ -7,8 +7,8 @@
 {"index": 6, "integral": "(x**2 + 1)**(3/2)/3", "integrand": "x*sqrt(x**2 + 1)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 7, "integral": "exp(x)*sin(x)/2 - exp(x)*cos(x)/2", "integrand": "exp(x)*sin(x)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 8, "integral": "-csc(x)**3/3", "integrand": "cos(x)*csc(x)**2/sin(x)**2", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 9, "integral": "SinIntegral(exp(x))", "integrand": "sin(exp(x))", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 10, "integral": "SinIntegral(y)", "integrand": "sin(y)/y", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "y"}
+{"index": 9, "integral": "Si(exp(x))", "integrand": "sin(exp(x))", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
+{"index": 10, "integral": "Si(y)", "integrand": "sin(y)/y", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "y"}
 {"index": 11, "integral": "exp(x) - cos(x)", "integrand": "exp(x) + sin(x)", "num_steps": 3, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 12, "integral": "x*exp(x**2)", "integrand": "2*x**2*exp(x**2) + exp(x**2)", "num_steps": 4, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 13, "integral": "x**3/3 + 2*x*exp(x) + exp(2*x)/2 - 2*exp(x)", "integrand": "(x + exp(x))**2", "num_steps": 5, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
@@ -29,7 +29,7 @@
 {"index": 28, "integral": "(10*E)**x/(1 + log(10))", "integrand": "10**x*exp(x)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 29, "integral": "-x**2*cos(x**2)/2 + sin(x**2)/2", "integrand": "x**3*sin(x**2)", "num_steps": 3, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 30, "integral": "-log(x**4 + 1)/12 + log(x**8 - x**4 + 1)/24 - sqrt(3)*atan(sqrt(3)*(1 - 2*x**4)/3)/12", "integrand": "x**7/(x**12 + 1)", "num_steps": 7, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 31, "integral": "I*x**(3*a + 1)*Gamma(3/2 + 1/(2*a), -I*x**(2*a))/(4*a*(-I*x**(2*a))**((3*a + 1)/(2*a))) - I*x**(3*a + 1)*Gamma(3/2 + 1/(2*a), I*x**(2*a))/(4*a*(I*x**(2*a))**((3*a + 1)/(2*a)))", "integrand": "x**(3*a)*sin(x**(2*a))", "num_steps": 3, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
+{"index": 31, "integral": "I*x**(3*a + 1)*uppergamma(3/2 + 1/(2*a), -I*x**(2*a))/(4*a*(-I*x**(2*a))**((3*a + 1)/(2*a))) - I*x**(3*a + 1)*uppergamma(3/2 + 1/(2*a), I*x**(2*a))/(4*a*(I*x**(2*a))**((3*a + 1)/(2*a)))", "integrand": "x**(3*a)*sin(x**(2*a))", "num_steps": 3, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 32, "integral": "2*sqrt(x)*sin(sqrt(x)) + 2*cos(sqrt(x))", "integrand": "cos(sqrt(x))", "num_steps": 3, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 33, "integral": "2*(x + 1)**(5/2)/5 - 2*(x + 1)**(3/2)/3", "integrand": "x*sqrt(x + 1)", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 34, "integral": "6*x**(1/6) - 3*x**(1/3) + 2*sqrt(x) - 6*log(x**(1/6) + 1)", "integrand": "1/(x**(1/3) + sqrt(x))", "num_steps": 4, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
@@ -43,8 +43,8 @@
 {"index": 42, "integral": "x*exp(x) - exp(x)", "integrand": "x*exp(x)", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 43, "integral": "exp(x)/(x + 1)", "integrand": "x*exp(x)/(x + 1)**2", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 44, "integral": "x*exp(x**2)", "integrand": "(2*x**2 + 1)*exp(x**2)", "num_steps": 5, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 45, "integral": "sqrt(pi)*Erfi(x)/2", "integrand": "exp(x**2)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 46, "integral": "ExpIntegralEi(x)", "integrand": "exp(x)/x", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
+{"index": 45, "integral": "sqrt(pi)*erfi(x)/2", "integrand": "exp(x**2)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
+{"index": 46, "integral": "Ei(x)", "integrand": "exp(x)/x", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 47, "integral": "-log(x + 1)/3 + log(x**2 - x + 1)/6 - sqrt(3)*atan(sqrt(3)*(1 - 2*x)/3)/3", "integrand": "x/(x**3 + 1)", "num_steps": 6, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 48, "integral": "atanh(x/A)/(A*(A**2 - B**2))", "integrand": "1/(A**4 - A**2*B**2 + x**2*(-A**2 + B**2))", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 49, "integral": "x**2*log(x)/2 - x**2/4", "integrand": "x*log(x)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
@@ -52,7 +52,7 @@
 {"index": 51, "integral": "-1/(x + 1)", "integrand": "1/(x**2 + 2*x + 1)", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 52, "integral": "x/(log(x) + 1)", "integrand": "log(x)/(log(x) + 1)**2", "num_steps": 7, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 53, "integral": "atan(log(x))", "integrand": "1/(x*(log(x)**2 + 1))", "num_steps": 2, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
-{"index": 54, "integral": "LogIntegral(x)", "integrand": "1/log(x)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
+{"index": 54, "integral": "li(x)", "integrand": "1/log(x)", "num_steps": 1, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 55, "integral": "x*sin(x) - x*cos(x) + sin(x) + cos(x)", "integrand": "x*(sin(x) + cos(x))", "num_steps": 6, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 56, "integral": "x - x*exp(-x) - exp(-x)", "integrand": "(x + exp(x))*exp(-x)", "num_steps": 4, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
 {"index": 57, "integral": "x**2/2 + x*exp(2*x)/2 + 2*x*exp(x) - exp(2*x)/4 - 2*exp(x)", "integrand": "x*(exp(x) + 1)**2", "num_steps": 6, "source": "0 Independent test suites/Moses Problems.m", "suite": "independent", "variable": "x"}
