@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-A corpus of 80,607 symbolic integration problems (Rubi, Hebisch, Blake,
+A corpus of 80,605 symbolic integration problems (Rubi, Hebisch, Blake,
 independent classics, MIT Bee) with tooling to run SymPy's integrators over
 it. The README covers the layout, format, and licensing; this file records
 the invariants and operational knowledge that are easy to get wrong.
@@ -70,8 +70,17 @@ python -m integration_test_suites.run --engine risch --sympy-path ../sympy \
 - Known import-time drops (recorded in the import reports): 2,756 Rubi
   expected answers that are no-result markers, 964 that do not survive a
   `str()`/`sympify` round trip, 13 Rubi modules that fail to import
-  upstream, 701 Blake answers in Maple `RootSum` lambda syntax. No
-  integrand is ever dropped.
+  upstream, 701 Blake answers in Maple `RootSum` lambda syntax. The only
+  excluded integrands are the two Welz problems whose upstream answer is
+  the literal `0` placeholder (`SKIP_CASES` in `from_rubi_modules.py`);
+  everything else keeps its integrand.
+- 17 Hebisch expected answers are corrected on import (`LOG_EXP_UNWRAP` /
+  `ANSWER_OVERRIDES` in `from_nasser_sympy.py`): the transcription's
+  `log(exp(u)**k)` towers are branch-wrong as antiderivatives, and 8737
+  had a conjugate-flipped constant. The audit proves all 17 corrected
+  forms. Skipped indexes stay stable — `index` is the upstream
+  enumeration position, so joins on `(suite, index)` survive
+  regeneration.
 - `validate.py` is the answer audit: it proves the corpus' own expected
   antiderivatives (and, for definite cases, quadrature-checks the expected
   values), so a translation bug shows up as unproven or mismatched answers

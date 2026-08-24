@@ -17,14 +17,14 @@ integration test suite it maintains itself.
 
 ## The corpus
 
-80,607 problems, most of them with a known answer.
+80,605 problems, most of them with a known answer.
 
 | Suite | Cases | What it is |
 | --- | ---: | --- |
 | [`rubi`](data/rubi/README.md) | 64,740 | Albert Rich's Rubi test suite, chapters 1-8 |
 | [`hebisch`](data/hebisch/README.md) | 10,335 | Random exp-log integrands guaranteed to be elementary |
 | [`blake`](data/blake/README.md) | 3,154 | Algebraic: pseudo-elliptic, hyperelliptic, nested radicals |
-| [`independent`](data/independent/README.md) | 1,780 | 12 classic sets: Timofeev, Apostol, Moses, Bronstein, ... |
+| [`independent`](data/independent/README.md) | 1,778 | 12 classic sets: Timofeev, Apostol, Moses, Bronstein, ... |
 | [`mit_bee_official`](data/mit_bee_official/README.md) | 544 | Every posted MIT Integration Bee problem, with official answers |
 | [`mit_bee`](data/mit_bee/README.md) | 54 | MIT Integration Bee problems SymPy could not do |
 
@@ -60,7 +60,8 @@ One JSON object per line, in `data/<suite>/**/*.jsonl`:
 Expressions are stored as strings and sympified on demand, because the
 corpus is loaded far more often than it is evaluated. `num_steps` is
 Rubi's own step count, passed through verbatim. `integral` is absent when
-the suite gives no answer, or gave one that does not parse.
+the suite gives no answer, gave one that does not parse, or gave Rubi's
+marker for a problem it could not do.
 
 A *definite* case additionally carries `lower` and `upper` (sympy-syntax
 bounds, e.g. `"0"`, `"pi/2"`, `"-oo"`) and `value`, the expected value of
@@ -199,10 +200,24 @@ upstream source to `data/`, and record what they dropped:
 | `mit_bee_official.py` | `mit_bee_official` | nothing; the transcription is embedded verbatim |
 
 `data/rubi/IMPORT_REPORT.json` and `data/NASSER_IMPORT_REPORT.json` record
-the per-run counts. The Rubi import currently drops 968 expected
-antiderivatives that do not survive a `str()`/`sympify` round trip, and
-skips 13 generated modules that fail to import upstream; no integrand is
-dropped.
+the per-run counts. The Rubi import translates the Mathematica heads the
+generated modules leave as undefined functions (`PolyLog`, `Gamma`,
+`EllipticPi`, `ProductLog`, `SinIntegral`, ...) to their SymPy
+equivalents, and drops the 2,756 expected answers that are not answers at
+all but Rubi's own no-result markers (`Unintegrable`, `CannotIntegrate`).
+It further drops 964 expected antiderivatives that do not survive a
+`str()`/`sympify` round trip, and skips 13 generated modules that fail to
+import upstream; the only excluded integrands are two Welz problems whose
+upstream "answer" is the literal `0` placeholder (see `SKIP_CASES` in the
+importer). The only untranslated heads remaining in the corpus are the
+arbitrary functions `F` and `F0` that some problems integrate against,
+and one `PolyGamma` of negative order, which has no SymPy equivalent.
+
+The Nasser import corrects 17 Hebisch expected answers whose transcribed
+`log(exp(u)**k)` towers are branch-wrong as antiderivatives (the suite's
+generator counts `log(exp(u))` as `u`); the corrected forms prove exactly
+against their integrands. See `LOG_EXP_UNWRAP` and `ANSWER_OVERRIDES` in
+`from_nasser_sympy.py`.
 
 ## Licensing, in short
 

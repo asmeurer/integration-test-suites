@@ -1,33 +1,40 @@
 {
   "totals": {
-    "cases": 80063,
-    "distinct_problems": 78522,
-    "redundant_cases": 1541,
-    "clusters_with_duplicates": 1383,
+    "cases": 80605,
+    "distinct_problems": 78985,
+    "redundant_cases": 1620,
+    "clusters_with_duplicates": 1440,
     "unhashable_cases": 0
   },
   "per_suite_case_counts": {
     "blake": 3154,
     "hebisch": 10335,
-    "independent": 1780,
+    "independent": 1778,
     "mit_bee": 54,
+    "mit_bee_official": 544,
     "rubi": 64740
   },
   "duplicates_within_suite": {
-    "rubi": 748,
+    "rubi": 749,
     "blake": 315,
-    "independent": 140,
-    "hebisch": 32
+    "independent": 129,
+    "hebisch": 32,
+    "mit_bee_official": 4
   },
   "duplicates_across_suites": {
     "independent & rubi": 198,
+    "independent & mit_bee_official": 31,
     "blake & independent": 26,
+    "mit_bee & mit_bee_official": 26,
+    "mit_bee_official & rubi": 16,
     "blake & rubi": 12,
+    "blake & mit_bee_official": 4,
     "hebisch & independent": 4,
     "hebisch & rubi": 3,
     "independent & mit_bee": 3,
     "mit_bee & rubi": 2,
-    "blake & mit_bee": 1
+    "blake & mit_bee": 1,
+    "hebisch & mit_bee_official": 1
   },
   "unhashable": [],
   "clusters": [
@@ -186,6 +193,48 @@
       ]
     },
     {
+      "key": "0205e11c39c5a137fa316f11ddfc7778",
+      "integrand": "(csc(x)-sin(x))**(1/2)",
+      "count": 7,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 5
+        },
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 13
+        },
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 18
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 8",
+          "index": 31
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 25",
+          "index": 73
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2015 qualifier, problem 11",
+          "index": 128
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
+          "index": 315
+        }
+      ]
+    },
+    {
       "key": "6fce9cc56ad9dbb3a9b3e400069a9a56",
       "integrand": "1/x/ln(x)",
       "count": 6,
@@ -320,6 +369,38 @@
           "suite": "independent",
           "source": "0 Independent test suites/Stewart Problems.m",
           "index": 22
+        }
+      ]
+    },
+    {
+      "key": "1f3eeaa64dacf0ca31830e1406873794",
+      "integrand": "sin(sqrt(x))",
+      "count": 5,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 191
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 51
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2017 qualifier, problem 9",
+          "index": 166
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2019 qualifier, problem 9",
+          "index": 205
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.m",
+          "index": 123
         }
       ]
     },
@@ -518,6 +599,87 @@
       ]
     },
     {
+      "key": "96edab9e96fd0f70d0e25c96b133c86a",
+      "integrand": "x*atan(x)",
+      "count": 4,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 91
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 229
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 54
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2014 qualifier, problem 11",
+          "index": 108
+        }
+      ]
+    },
+    {
+      "key": "24bdbfc698c5213bcb5f21852e4999da",
+      "integrand": "atan(sqrt(x))",
+      "count": 4,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 94
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2024 regular season, problem 8",
+          "index": 375
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2026 qualifier, problem 14",
+          "index": 497
+        },
+        {
+          "suite": "rubi",
+          "source": "5 Inverse trig functions/5.3 Inverse tangent/5.3.2 (d x)^m (a+b arctan(c x^n))^p.m",
+          "index": 155
+        }
+      ]
+    },
+    {
+      "key": "850ce795ac61c6edd584e0ab4a1efd98",
+      "integrand": "x**3*sin(x**2)",
+      "count": 4,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 83
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Moses Problems.m",
+          "index": 29
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 7",
+          "index": 241
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
+          "index": 781
+        }
+      ]
+    },
+    {
       "key": "e229bbe3b4a640140dd5090540da922f",
       "integrand": "x*cos(x)",
       "count": 4,
@@ -599,6 +761,33 @@
       ]
     },
     {
+      "key": "4145ca21b9a6db758908ba1d89442706",
+      "integrand": "cos(log(x))",
+      "count": 4,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 148
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 47
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 73
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 11",
+          "index": 34
+        }
+      ]
+    },
+    {
       "key": "1e742877a806854e2aa39df0981344c9",
       "integrand": "exp(2*x)/(exp(x) + 1)",
       "count": 4,
@@ -649,6 +838,33 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
           "index": 499
+        }
+      ]
+    },
+    {
+      "key": "250ef6e3ed7649b04190e58151e60593",
+      "integrand": "1/sqrt(x**2 + 1)",
+      "count": 4,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 198
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 259
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2019 qualifier, problem 20",
+          "index": 215
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
+          "index": 698
         }
       ]
     },
@@ -707,29 +923,29 @@
       ]
     },
     {
-      "key": "0205e11c39c5a137fa316f11ddfc7778",
-      "integrand": "(csc(x)-sin(x))**(1/2)",
+      "key": "9c1d38baead251b783f2aea15ac010f7",
+      "integrand": "sqrt((1 - x)/(x + 1))",
       "count": 4,
       "occurrences": [
         {
-          "suite": "mit_bee",
-          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
-          "index": 5
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 205
         },
         {
           "suite": "mit_bee",
           "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
-          "index": 13
+          "index": 9
         },
         {
-          "suite": "mit_bee",
-          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
-          "index": 18
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 25",
+          "index": 48
         },
         {
           "suite": "rubi",
-          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
-          "index": 315
+          "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
+          "index": 573
         }
       ]
     },
@@ -806,6 +1022,28 @@
           "suite": "independent",
           "source": "0 Independent test suites/Timofeev Problems.m",
           "index": 298
+        }
+      ]
+    },
+    {
+      "key": "005eebafd5dc778ead2d57d3eb226cdb",
+      "integrand": "(-1+x)/(1+x)/(x**3+x**2+x)**(1/2)",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "blake",
+          "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+          "index": 238
+        },
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 12
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 10",
+          "index": 58
         }
       ]
     },
@@ -1052,6 +1290,28 @@
       ]
     },
     {
+      "key": "c8f13b35a517b389b1dbf9ede39a3573",
+      "integrand": "x**2*sin(x)",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 22
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 92
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2026 qualifier, problem 9",
+          "index": 493
+        }
+      ]
+    },
+    {
       "key": "3128d01322cc0e9afbd3478940ecf34c",
       "integrand": "sin(x)*cos(x)",
       "count": 3,
@@ -1114,6 +1374,50 @@
           "suite": "independent",
           "source": "0 Independent test suites/Timofeev Problems.m",
           "index": 306
+        }
+      ]
+    },
+    {
+      "key": "4cf9a448cd32f39cfb95a9ecb5d5de06",
+      "integrand": "tan(x)**2",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 41
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 81
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2013 qualifier, problem 13",
+          "index": 86
+        }
+      ]
+    },
+    {
+      "key": "380edb932d5aa53cdb8a6cc42192a842",
+      "integrand": "tan(x)**4",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 42
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 82
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2015 qualifier, problem 18",
+          "index": 135
         }
       ]
     },
@@ -1272,6 +1576,28 @@
       ]
     },
     {
+      "key": "abe071110acd7fb02df37bb852cd101a",
+      "integrand": "asin(x)**2",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 84
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 77
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2014 qualifier, problem 14",
+          "index": 111
+        }
+      ]
+    },
+    {
       "key": "3e612cdfabd853dabe09e0292a3a8dea",
       "integrand": "1/(a + b*x**2)",
       "count": 3,
@@ -1290,28 +1616,6 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.1 Rational functions.m",
           "index": 449
-        }
-      ]
-    },
-    {
-      "key": "96edab9e96fd0f70d0e25c96b133c86a",
-      "integrand": "x*atan(x)",
-      "count": 3,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 91
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 229
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 54
         }
       ]
     },
@@ -1492,28 +1796,6 @@
       ]
     },
     {
-      "key": "850ce795ac61c6edd584e0ab4a1efd98",
-      "integrand": "x**3*sin(x**2)",
-      "count": 3,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 83
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Moses Problems.m",
-          "index": 29
-        },
-        {
-          "suite": "rubi",
-          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
-          "index": 781
-        }
-      ]
-    },
-    {
       "key": "d17666f449691239b3d481379de8bcd9",
       "integrand": "sin(a + b*x)**2",
       "count": 3,
@@ -1602,28 +1884,6 @@
       ]
     },
     {
-      "key": "4145ca21b9a6db758908ba1d89442706",
-      "integrand": "cos(log(x))",
-      "count": 3,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 148
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 47
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Timofeev Problems.m",
-          "index": 73
-        }
-      ]
-    },
-    {
       "key": "c27f535245d7adbddb9698c8bb5c0a58",
       "integrand": "sqrt(a + b*x)*sqrt(c + d*x)",
       "count": 3,
@@ -1642,50 +1902,6 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.1 Binomial products/1.1.1 Linear/1.1.1.3 (a+b x)^m (c+d x)^n (e+f x)^p.m",
           "index": 534
-        }
-      ]
-    },
-    {
-      "key": "1f3eeaa64dacf0ca31830e1406873794",
-      "integrand": "sin(sqrt(x))",
-      "count": 3,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 191
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 51
-        },
-        {
-          "suite": "rubi",
-          "source": "4 Trig functions/4.1 Sine/4.1.12 (e x)^m (a+b sin(c+d x^n))^p.m",
-          "index": 123
-        }
-      ]
-    },
-    {
-      "key": "250ef6e3ed7649b04190e58151e60593",
-      "integrand": "1/sqrt(x**2 + 1)",
-      "count": 3,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 198
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 259
-        },
-        {
-          "suite": "rubi",
-          "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
-          "index": 698
         }
       ]
     },
@@ -1712,6 +1928,28 @@
       ]
     },
     {
+      "key": "cbfeced3e6dc09325b5e5d05fb7dadca",
+      "integrand": "tanh(x)",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 245
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 511
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2016 qualifier, problem 1",
+          "index": 138
+        }
+      ]
+    },
+    {
       "key": "7b03c21a2921f08cbb0482b4797b9de4",
       "integrand": "x*exp(x)*cos(x)",
       "count": 3,
@@ -1730,6 +1968,72 @@
           "suite": "rubi",
           "source": "4 Trig functions/4.7 Miscellaneous/4.7.6 f^(a+b x+c x^2) trig(d+e x+f x^2)^n.m",
           "index": 47
+        }
+      ]
+    },
+    {
+      "key": "b9dd26a855163fa1fd1b849aca6c327a",
+      "integrand": "x**3*exp(x**2)",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 44
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2017 qualifier, problem 4",
+          "index": 161
+        },
+        {
+          "suite": "rubi",
+          "source": "2 Exponentials/2.3 Exponential functions.m",
+          "index": 640
+        }
+      ]
+    },
+    {
+      "key": "dc77a78237dd5d706bfa73a32d998e9f",
+      "integrand": "cos(x)**6",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 69
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 308
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 9",
+          "index": 32
+        }
+      ]
+    },
+    {
+      "key": "f876b49778cd84943692924fe1711b2e",
+      "integrand": "tan(x)**2*sec(x)**4",
+      "count": 3,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 86
+        },
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 370
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 7",
+          "index": 30
         }
       ]
     },
@@ -1800,24 +2104,24 @@
       ]
     },
     {
-      "key": "9c1d38baead251b783f2aea15ac010f7",
-      "integrand": "sqrt((1 - x)/(x + 1))",
+      "key": "bd56b51964012e8112144fe6aeb5cca9",
+      "integrand": "sech(x)",
       "count": 3,
       "occurrences": [
         {
           "suite": "independent",
           "source": "0 Independent test suites/Timofeev Problems.m",
-          "index": 205
+          "index": 513
         },
         {
-          "suite": "mit_bee",
-          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
-          "index": 9
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2017 qualifier, problem 3",
+          "index": 160
         },
         {
-          "suite": "rubi",
-          "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
-          "index": 573
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 qualifier, problem 2",
+          "index": 292
         }
       ]
     },
@@ -2709,6 +3013,23 @@
       ]
     },
     {
+      "key": "adb5b33ec0a2c103683f89c40755d1df",
+      "integrand": "1/x**2/(x**4+1)**(3/4)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "blake",
+          "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+          "index": 52
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 14",
+          "index": 37
+        }
+      ]
+    },
+    {
       "key": "3a2edb12dbf3cc90ae89c13ccdd725c7",
       "integrand": "(x**2-1)/(x**2+1)/(x**3+x)**(1/2)",
       "count": 2,
@@ -2722,23 +3043,6 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
           "index": 716
-        }
-      ]
-    },
-    {
-      "key": "005eebafd5dc778ead2d57d3eb226cdb",
-      "integrand": "(-1+x)/(1+x)/(x**3+x**2+x)**(1/2)",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "blake",
-          "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
-          "index": 238
-        },
-        {
-          "suite": "mit_bee",
-          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
-          "index": 12
         }
       ]
     },
@@ -2807,6 +3111,23 @@
           "suite": "independent",
           "source": "0 Independent test suites/Welz Problems.m",
           "index": 81
+        }
+      ]
+    },
+    {
+      "key": "9fafe97e0d4f628a4d2cc9837fa76848",
+      "integrand": "1/(x**4+1)**(1/4)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "blake",
+          "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+          "index": 402
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2024 finals, problem T1",
+          "index": 410
         }
       ]
     },
@@ -3079,6 +3400,23 @@
           "suite": "blake",
           "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
           "index": 786
+        }
+      ]
+    },
+    {
+      "key": "4438a01aaf0cfa0c599f76b519171293",
+      "integrand": "1/(-1+x)/(x**3+x)**(1/4)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "blake",
+          "source": "Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+          "index": 794
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2026 finals, problem 2",
+          "index": 541
         }
       ]
     },
@@ -8438,6 +8776,23 @@
       ]
     },
     {
+      "key": "a9f51566bd6705f7ea6ad54bb9deb449",
+      "integrand": "exp(1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "hebisch",
+          "source": "Hebisch rand3c.input, via 12000.org SYMPY_syntax.zip (Summer 2021)",
+          "index": 1047
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 qualifier, problem 1",
+          "index": 291
+        }
+      ]
+    },
+    {
       "key": "797646fdb1636562a170fd9046c58a37",
       "integrand": "(-x*ln(x)+1)/x/ln(x)",
       "count": 2,
@@ -8727,19 +9082,19 @@
       ]
     },
     {
-      "key": "c8f13b35a517b389b1dbf9ede39a3573",
-      "integrand": "x**2*sin(x)",
+      "key": "035db463740fee31fbb49a2691866672",
+      "integrand": "(x**2 + 1)**(-3/2)",
       "count": 2,
       "occurrences": [
         {
           "suite": "independent",
           "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 22
+          "index": 15
         },
         {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 92
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 17",
+          "index": 193
         }
       ]
     },
@@ -8880,40 +9235,6 @@
       ]
     },
     {
-      "key": "4cf9a448cd32f39cfb95a9ecb5d5de06",
-      "integrand": "tan(x)**2",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 41
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 81
-        }
-      ]
-    },
-    {
-      "key": "380edb932d5aa53cdb8a6cc42192a842",
-      "integrand": "tan(x)**4",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 42
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 82
-        }
-      ]
-    },
-    {
       "key": "12983083b18dab9b01a72b2bc837e2fb",
       "integrand": "cot(x)**2",
       "count": 2,
@@ -9016,23 +9337,6 @@
       ]
     },
     {
-      "key": "abe071110acd7fb02df37bb852cd101a",
-      "integrand": "asin(x)**2",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 84
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Timofeev Problems.m",
-          "index": 77
-        }
-      ]
-    },
-    {
       "key": "0796e9002f15805fd3a01dbe9bf42e4c",
       "integrand": "asin(x)/x**2",
       "count": 2,
@@ -9097,23 +9401,6 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.1 Rational functions.m",
           "index": 450
-        }
-      ]
-    },
-    {
-      "key": "24bdbfc698c5213bcb5f21852e4999da",
-      "integrand": "atan(sqrt(x))",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Apostol Problems.m",
-          "index": 94
-        },
-        {
-          "suite": "rubi",
-          "source": "5 Inverse trig functions/5.3 Inverse tangent/5.3.2 (d x)^m (a+b arctan(c x^n))^p.m",
-          "index": 155
         }
       ]
     },
@@ -9318,6 +9605,23 @@
           "suite": "independent",
           "source": "0 Independent test suites/Hearn Problems.m",
           "index": 261
+        }
+      ]
+    },
+    {
+      "key": "315b401e4e7b98ab943e184ab8b14f16",
+      "integrand": "1/(x**3 - x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Apostol Problems.m",
+          "index": 125
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 13",
+          "index": 61
         }
       ]
     },
@@ -9883,6 +10187,23 @@
       ]
     },
     {
+      "key": "057b286c3fbd80bdc9c077b25cefc450",
+      "integrand": "1/cos(x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 80
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 12",
+          "index": 35
+        }
+      ]
+    },
+    {
       "key": "1b8445928ba2293dd03c2a0512ac9733",
       "integrand": "sin(x)*sin(2*x)",
       "count": 2,
@@ -10002,6 +10323,23 @@
       ]
     },
     {
+      "key": "fe41d49c6976ae933eb567707a6c7d84",
+      "integrand": "1/(sin(x) + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 119
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 9",
+          "index": 185
+        }
+      ]
+    },
+    {
       "key": "e27dce7c648026b81f622ce9760a09c9",
       "integrand": "1/(1 - sin(x))",
       "count": 2,
@@ -10066,6 +10404,23 @@
           "suite": "independent",
           "source": "0 Independent test suites/Timofeev Problems.m",
           "index": 75
+        }
+      ]
+    },
+    {
+      "key": "f8011fa9ed34dc1e3bb3dfa7918bf3d6",
+      "integrand": "sin(2*x)*cos(3*x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Hearn Problems.m",
+          "index": 130
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2014 qualifier, problem 6",
+          "index": 103
         }
       ]
     },
@@ -10427,23 +10782,6 @@
       ]
     },
     {
-      "key": "cbfeced3e6dc09325b5e5d05fb7dadca",
-      "integrand": "tanh(x)",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Hearn Problems.m",
-          "index": 245
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Timofeev Problems.m",
-          "index": 511
-        }
-      ]
-    },
-    {
       "key": "575fc6b23550581171f194dbeee23782",
       "integrand": "coth(x)",
       "count": 2,
@@ -10627,6 +10965,23 @@
           "suite": "independent",
           "source": "0 Independent test suites/Moses Problems.m",
           "index": 33
+        }
+      ]
+    },
+    {
+      "key": "a3b69c914073b0b27ea71179ad2be663",
+      "integrand": "exp(x + 1)/(exp(x) + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Moses Problems.m",
+          "index": 27
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2025 qualifier, problem 2",
+          "index": 419
         }
       ]
     },
@@ -10852,23 +11207,6 @@
       ]
     },
     {
-      "key": "b9dd26a855163fa1fd1b849aca6c327a",
-      "integrand": "x**3*exp(x**2)",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 44
-        },
-        {
-          "suite": "rubi",
-          "source": "2 Exponentials/2.3 Exponential functions.m",
-          "index": 640
-        }
-      ]
-    },
-    {
       "key": "8e993cb5b49f408d35bad8e2db31c19f",
       "integrand": "x**5*cos(x**3)",
       "count": 2,
@@ -10899,23 +11237,6 @@
           "suite": "rubi",
           "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
           "index": 789
-        }
-      ]
-    },
-    {
-      "key": "dc77a78237dd5d706bfa73a32d998e9f",
-      "integrand": "cos(x)**6",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 69
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Timofeev Problems.m",
-          "index": 308
         }
       ]
     },
@@ -10984,23 +11305,6 @@
           "suite": "rubi",
           "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
           "index": 790
-        }
-      ]
-    },
-    {
-      "key": "f876b49778cd84943692924fe1711b2e",
-      "integrand": "tan(x)**2*sec(x)**4",
-      "count": 2,
-      "occurrences": [
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 86
-        },
-        {
-          "suite": "independent",
-          "source": "0 Independent test suites/Stewart Problems.m",
-          "index": 370
         }
       ]
     },
@@ -11566,6 +11870,23 @@
       ]
     },
     {
+      "key": "402dfd1f096bdb345a6fb8817e77be53",
+      "integrand": "x**3/(x**2 + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 196
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2013 qualifier, problem 18",
+          "index": 91
+        }
+      ]
+    },
+    {
       "key": "d8c2a34b08a505f3d4473d78afa8eba7",
       "integrand": "(4*x**2 + 5*x + 7)/(4*x**2 + 4*x + 5)",
       "count": 2,
@@ -12008,6 +12329,23 @@
       ]
     },
     {
+      "key": "e27089030ef00f7d3552915769d064d4",
+      "integrand": "log(x**2 + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 267
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2020 qualifier, problem 8",
+          "index": 222
+        }
+      ]
+    },
+    {
       "key": "21ac7f8a83370a46b541d056ecb7d074",
       "integrand": "sqrt(log(x) + 1)/(x*log(x))",
       "count": 2,
@@ -12212,6 +12550,23 @@
       ]
     },
     {
+      "key": "8e90a6ee679f42fc8f0a3a3b3e667210",
+      "integrand": "(exp(x) + 1)/(1 - exp(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 302
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2015 qualifier, problem 17",
+          "index": 134
+        }
+      ]
+    },
+    {
       "key": "2e8860f690ef1485d9b4b48a3a4e1854",
       "integrand": "x/((x**2 + 1)*(x**2 + 4))",
       "count": 2,
@@ -12382,6 +12737,23 @@
       ]
     },
     {
+      "key": "539a604ac2f339c8c2723faf72f33e9e",
+      "integrand": "log(x + 1)/x**2",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 332
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 regular season, problem 2",
+          "index": 255
+        }
+      ]
+    },
+    {
       "key": "9b0bfd2742f89e581b0c6ce34856c6e4",
       "integrand": "1/(exp(3*x) - exp(x))",
       "count": 2,
@@ -12501,6 +12873,23 @@
       ]
     },
     {
+      "key": "86fea713712616c996015c0885f81aae",
+      "integrand": "sec(x)**5",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Stewart Problems.m",
+          "index": 354
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2024 semifinal, problem 105",
+          "index": 400
+        }
+      ]
+    },
+    {
       "key": "228754ad481796c21913ff41a68ae2ef",
       "integrand": "log(sin(x))*sin(x)**2*cos(x)",
       "count": 2,
@@ -12599,6 +12988,40 @@
           "suite": "rubi",
           "source": "2 Exponentials/2.3 Exponential functions.m",
           "index": 680
+        }
+      ]
+    },
+    {
+      "key": "6e27bddcc745d0fdeae000ac9679fb70",
+      "integrand": "x**3*sqrt(x**2 + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 46
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2016 qualifier, problem 15",
+          "index": 152
+        }
+      ]
+    },
+    {
+      "key": "b4bd8b4b5ae2cd0b5ef2d200b27f3b72",
+      "integrand": "1/sqrt(-x**2 + x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 53
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 18",
+          "index": 251
         }
       ]
     },
@@ -12841,6 +13264,23 @@
       ]
     },
     {
+      "key": "418dfda713d62d74789abc6ba0e45973",
+      "integrand": "log(log(x))/x",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 564
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2010 qualifier, problem 17",
+          "index": 16
+        }
+      ]
+    },
+    {
       "key": "3e39639c4f933f972aa49fc715c1479d",
       "integrand": "sqrt(1 - x**2)*acos(x)",
       "count": 2,
@@ -12854,6 +13294,23 @@
           "suite": "rubi",
           "source": "5 Inverse trig functions/5.2 Inverse cosine/5.2.5 Inverse cosine functions.m",
           "index": 78
+        }
+      ]
+    },
+    {
+      "key": "795bbb4e85d7a364ab1241ac49091211",
+      "integrand": "exp(x)*asin(tanh(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "independent",
+          "source": "0 Independent test suites/Timofeev Problems.m",
+          "index": 628
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2026 regular season, problem 15",
+          "index": 518
         }
       ]
     },
@@ -12939,6 +13396,618 @@
           "suite": "rubi",
           "source": "4 Trig functions/4.2 Cosine/4.2.1.2 (g sin)^p (a+b cos)^m.m",
           "index": 25
+        }
+      ]
+    },
+    {
+      "key": "5adcfda691026db1c9e2029a7b651e81",
+      "integrand": "1/(9*cos(x)**2+4*sin(x)**2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 6
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 13",
+          "index": 36
+        }
+      ]
+    },
+    {
+      "key": "ce469db45a169a70c7a349300299e574",
+      "integrand": "(x/(-x**3+1))**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 7
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 18",
+          "index": 41
+        }
+      ]
+    },
+    {
+      "key": "68651b16803145481867c69bda87f0d1",
+      "integrand": "sin(101*x)*sin(x)**99",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 8
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 22",
+          "index": 45
+        }
+      ]
+    },
+    {
+      "key": "b59034af580fde3640df45202a7cb9f4",
+      "integrand": "1/(1+x**(1/2))/(-x**2+x)**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 10
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 3",
+          "index": 51
+        }
+      ]
+    },
+    {
+      "key": "d66b98a3328502ff5990b2f6d86fecc8",
+      "integrand": "sin(x)*(1+tan(x)**2)**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 14
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2013 qualifier, problem 7",
+          "index": 80
+        }
+      ]
+    },
+    {
+      "key": "64bd315022c6730c1abe698e117a5dc6",
+      "integrand": "x*sec(4*x)**2",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 15
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2014 qualifier, problem 16",
+          "index": 113
+        }
+      ]
+    },
+    {
+      "key": "22a4c67db85c3510b931311b6d23c648",
+      "integrand": "(1+2*x*exp(x**2))*cos(x)-(x+exp(x**2))*sin(x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 20
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2016 qualifier, problem 11",
+          "index": 148
+        }
+      ]
+    },
+    {
+      "key": "0fef71e4308c79d8962010da4bd1879b",
+      "integrand": "acosh(x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 21
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2017 qualifier, problem 7",
+          "index": 164
+        }
+      ]
+    },
+    {
+      "key": "c6134da1bf04e49e94441d29524ca711",
+      "integrand": "cos(x)/(1-cos(2*x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 25
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 10",
+          "index": 186
+        }
+      ]
+    },
+    {
+      "key": "bbdca43c6738403c23a47e5baefe8ab3",
+      "integrand": "(2018*x**2017+2017*x**2016)/(x**4036+2*x**4035+x**4034+1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 26
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 13",
+          "index": 189
+        }
+      ]
+    },
+    {
+      "key": "f476f61d2e31eefdf6b14e7bf4a7fea5",
+      "integrand": "1/(x**(41/25)+x**(9/25))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 27
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 15",
+          "index": 191
+        }
+      ]
+    },
+    {
+      "key": "c8e41970b15e7f66f654bb7f5ed7a504",
+      "integrand": "1/(x**(3/2)-x**2)**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 28
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2018 qualifier, problem 18",
+          "index": 194
+        }
+      ]
+    },
+    {
+      "key": "4419b7f546d296ff9cce62056713091a",
+      "integrand": "exp(x+exp(x))+exp(x-exp(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 29
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2019 qualifier, problem 3",
+          "index": 199
+        }
+      ]
+    },
+    {
+      "key": "fd0a584c3a2445f95a156f7c660252b5",
+      "integrand": "x/((-1+x)**(1/2)+(x+1)**(1/2))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 32
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 5",
+          "index": 239
+        }
+      ]
+    },
+    {
+      "key": "3439894d0270f6cd60ec34ba5af474cf",
+      "integrand": "sin(x+sin(x))-sin(x-sin(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 33
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 14",
+          "index": 247
+        }
+      ]
+    },
+    {
+      "key": "c26dbc2c5869af303e5dbac5e7c9c28c",
+      "integrand": "1/(1+sin(x))+1/(1+cos(x))+1/(tan(x)+1)+1/(1+cot(x))+1/(1+sec(x))+1/(1+csc(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 34
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 17",
+          "index": 250
+        }
+      ]
+    },
+    {
+      "key": "c5885d5060d8dfa3189754bb30b57067",
+      "integrand": "(2*x**2022+1)/(x**2023+x)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 37
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 qualifier, problem 15",
+          "index": 304
+        }
+      ]
+    },
+    {
+      "key": "d72c333111ddbad5690f1a45f4d9be81",
+      "integrand": "(cos(x)-sin(x))/(2+sin(2*x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 39
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 regular season, problem 11",
+          "index": 264
+        }
+      ]
+    },
+    {
+      "key": "7bab227beef987330f226085832a5768",
+      "integrand": "(sec(1+ln(x))**2-tan(1+ln(x)))/x**2",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 40
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 regular season, problem 12",
+          "index": 265
+        }
+      ]
+    },
+    {
+      "key": "7dc225b04c2087f12e3cb7ca0b750f14",
+      "integrand": "((sin(20*x)+3*sin(21*x)+sin(22*x))**2+(cos(20*x)+3*cos(21*x)+cos(22*x))**2)**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 44
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 finals, problem 1",
+          "index": 286
+        }
+      ]
+    },
+    {
+      "key": "8a2f2ae95e19875316aeaef8ec73a90d",
+      "integrand": "1/((x+1)**3*(-1+x))**(1/2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 47
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 regular season, problem 7",
+          "index": 315
+        }
+      ]
+    },
+    {
+      "key": "f09fbb8ab631d896c8a8f3ed2f6f4d6f",
+      "integrand": "exp(cos(x))*cos(2*x+sin(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 49
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 semifinal, problem 101",
+          "index": 336
+        }
+      ]
+    },
+    {
+      "key": "2ee5c11efbfdc32df799df27680dd848",
+      "integrand": "sin(4*atan(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee",
+          "source": "MIT Integration Bee, via sympy/sympy discussion 24843 (integrands unsolved by sympy 1.11.1)",
+          "index": 50
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2023 semifinal, problem 108",
+          "index": 343
+        }
+      ]
+    },
+    {
+      "key": "a8dc58c2cf689e4c856117a104df7e49",
+      "integrand": "1/(x*(x**5 + 1))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2010 qualifier, problem 9",
+          "index": 8
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.1 Binomial products/1.1.3 General/1.1.3.2 (c x)^m (a+b x^n)^p.m",
+          "index": 1268
+        }
+      ]
+    },
+    {
+      "key": "e4b953551ecd79807f57f59f5c6edb40",
+      "integrand": "x**x*(1 + log(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2010 qualifier, problem 13",
+          "index": 12
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 20",
+          "index": 43
+        }
+      ]
+    },
+    {
+      "key": "db436c4dfcce83cf36b48425d3f82b97",
+      "integrand": "2*log(x) + log(x)**2",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 2",
+          "index": 25
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2013 qualifier, problem 17",
+          "index": 90
+        }
+      ]
+    },
+    {
+      "key": "90b07656375d954da79a228709d33a4f",
+      "integrand": "(x**2 + 1)/(x + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 4",
+          "index": 27
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.1 Rational functions.m",
+          "index": 470
+        }
+      ]
+    },
+    {
+      "key": "b27ef9fb4533a0033b7df47c39e0122f",
+      "integrand": "1/(1 + 2*x**2 + x**4)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2011 qualifier, problem 10",
+          "index": 33
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.2 (d x)^m (a+b x^2+c x^4)^p.m",
+          "index": 531
+        }
+      ]
+    },
+    {
+      "key": "756de19b2fcb5015be575cd80d7240f0",
+      "integrand": "sin(acos(x))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 5",
+          "index": 53
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2020 qualifier, problem 19",
+          "index": 233
+        }
+      ]
+    },
+    {
+      "key": "466e4dc9d291996feab99fb5a9877763",
+      "integrand": "cos(x)*log(x) + sin(x)/x",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2012 qualifier, problem 12",
+          "index": 60
+        },
+        {
+          "suite": "rubi",
+          "source": "3 Logarithms/3.5 Logarithm functions.m",
+          "index": 158
+        }
+      ]
+    },
+    {
+      "key": "6a414ca0bc9232fc4134374dea112db5",
+      "integrand": "x/(1 - x**4)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2013 qualifier, problem 21",
+          "index": 94
+        },
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 8",
+          "index": 242
+        }
+      ]
+    },
+    {
+      "key": "8b5505cb0be904e2482a529aab5492f7",
+      "integrand": "sin(x)*tan(x)**2",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2015 qualifier, problem 19",
+          "index": 136
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
+          "index": 787
+        }
+      ]
+    },
+    {
+      "key": "4d382644377186ef1f80d0f67d691e45",
+      "integrand": "x/(x**4 + x**2 + 1)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2016 qualifier, problem 16",
+          "index": 153
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.2 Trinomial products/1.2.2 Quartic/1.2.2.2 (d x)^m (a+b x^2+c x^4)^p.m",
+          "index": 908
+        }
+      ]
+    },
+    {
+      "key": "781f42bd2dfc59e20508a6503be4a698",
+      "integrand": "cos(x)*cos(sin(x))*cos(sin(sin(x)))",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2019 qualifier, problem 7",
+          "index": 203
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.7 Miscellaneous/4.7.7 Trig functions.m",
+          "index": 671
+        }
+      ]
+    },
+    {
+      "key": "3568f09a3e59f51016a425f5208d1edf",
+      "integrand": "1/(1 + cos(x)**2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2022 qualifier, problem 20",
+          "index": 253
+        },
+        {
+          "suite": "rubi",
+          "source": "4 Trig functions/4.2 Cosine/4.2.7 (d trig)^m (a+b (c cos)^n)^p.m",
+          "index": 43
+        }
+      ]
+    },
+    {
+      "key": "82be07728928186bc32d4c73e1bc7fba",
+      "integrand": "sqrt(x)/(1 + x**2)",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "mit_bee_official",
+          "source": "MIT Integration Bee 2026 quarterfinal, problem 106",
+          "index": 527
+        },
+        {
+          "suite": "rubi",
+          "source": "1 Algebraic functions/1.1 Binomial products/1.1.2 Quadratic/1.1.2.2 (c x)^m (a+b x^2)^p.m",
+          "index": 315
         }
       ]
     },
@@ -18328,6 +19397,23 @@
           "suite": "rubi",
           "source": "1 Algebraic functions/1.3 Miscellaneous/1.3.2 Algebraic functions.m",
           "index": 800
+        }
+      ]
+    },
+    {
+      "key": "631133a5755d48333f4e281e5c6ed5e4",
+      "integrand": "F**(c*(a + b*x))*(d + e*x)**m",
+      "count": 2,
+      "occurrences": [
+        {
+          "suite": "rubi",
+          "source": "2 Exponentials/2.1 u (F^(c (a+b x)))^n.m",
+          "index": 0
+        },
+        {
+          "suite": "rubi",
+          "source": "2 Exponentials/2.1 u (F^(c (a+b x)))^n.m",
+          "index": 22
         }
       ]
     },
@@ -24197,8 +25283,8 @@
       ]
     },
     {
-      "key": "c2d29dd09d13c53066d42a7fc761ad50",
-      "integrand": "PolyLog(2, c*(a + b*x))",
+      "key": "7a8b2630322bce47a3d1834be064e342",
+      "integrand": "polylog(2, c*(a + b*x))",
       "count": 2,
       "occurrences": [
         {
@@ -24214,8 +25300,8 @@
       ]
     },
     {
-      "key": "6dc67678a4445327c8398954e4234ef0",
-      "integrand": "ProductLog(a + b*x)**2",
+      "key": "beecce9a8667df2e9096613803cbb9cb",
+      "integrand": "LambertW(a + b*x)**2",
       "count": 2,
       "occurrences": [
         {
@@ -24231,8 +25317,8 @@
       ]
     },
     {
-      "key": "5b6cf2895825ff57c3aa5378be69d663",
-      "integrand": "ProductLog(a + b*x)",
+      "key": "3ed5500055b6b7ca2e252aa31606de2a",
+      "integrand": "LambertW(a + b*x)",
       "count": 2,
       "occurrences": [
         {
@@ -24248,8 +25334,8 @@
       ]
     },
     {
-      "key": "93692bd0a9d1c5cc10ece16060b5b509",
-      "integrand": "sqrt(c*ProductLog(a + b*x))",
+      "key": "567934aae0780d0d0cc8bb7dbab2df10",
+      "integrand": "sqrt(c*LambertW(a + b*x))",
       "count": 2,
       "occurrences": [
         {
@@ -24265,8 +25351,8 @@
       ]
     },
     {
-      "key": "9307020d002e9bc6f28f2cc576d70bdd",
-      "integrand": "1/sqrt(c*ProductLog(a + b*x))",
+      "key": "55e17cc9b3791adf8d77481dffa282a5",
+      "integrand": "1/sqrt(c*LambertW(a + b*x))",
       "count": 2,
       "occurrences": [
         {
@@ -24282,8 +25368,8 @@
       ]
     },
     {
-      "key": "7f1bcd930f342ab5b8749b54d73fe26d",
-      "integrand": "1/sqrt(-c*ProductLog(a + b*x))",
+      "key": "ad64ba3f3849fec604011a8acd33fb8c",
+      "integrand": "1/sqrt(-c*LambertW(a + b*x))",
       "count": 2,
       "occurrences": [
         {
@@ -24299,8 +25385,8 @@
       ]
     },
     {
-      "key": "207a427d1f550a765b633aa153f9385c",
-      "integrand": "ProductLog(a*x)**(-2)",
+      "key": "26bb767e94e66159a888416f4c0d7d97",
+      "integrand": "LambertW(a*x)**(-2)",
       "count": 2,
       "occurrences": [
         {
@@ -24316,8 +25402,8 @@
       ]
     },
     {
-      "key": "0b19e74ca3efc66754cffe087ef597ac",
-      "integrand": "ProductLog(a/x)**2",
+      "key": "a6e5d085f3adf5c9855be6a9ad95510c",
+      "integrand": "LambertW(a/x)**2",
       "count": 2,
       "occurrences": [
         {
