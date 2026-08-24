@@ -22,6 +22,15 @@ An antiderivative that does not sympify (Blake's answers use Maple's
 is dropped while the problem is kept: the integrand is the test, and the
 expected answer is a bonus the runner can do without.
 
+A handful of Hebisch expected answers are corrected on import (see
+``LOG_EXP_UNWRAP`` and ``ANSWER_OVERRIDES``): the suite's integrands are
+expanded derivatives of generated expressions in which ``log(exp(u))``
+counts as ``u``, but the transcribed answers keep the unsimplified
+``log(exp(u)**k)`` towers, which differ from ``k*u`` by a locally
+constant offset off the principal strip and so are wrong as
+antiderivatives there.  The corrected forms prove exactly:
+``cancel(diff(F) - f) == 0``.
+
 Usage:
     python importers/from_nasser_sympy.py <path-to-extracted-SYMPY-dir>
 """
@@ -44,6 +53,48 @@ SOURCES = [
      'Blake IntegrateAlgebraic problems, via 12000.org SYMPY_syntax.zip'
      ' (Summer 2021)'),
 ]
+
+
+#: Hebisch cases whose expected answers are rewritten with
+#: ``log(exp(u)**k) -> k*u`` on import.  The audit's numerical oracle
+#: convicted all of these (2026-08-24): the unsimplified tower is only a
+#: valid antiderivative where ``k*u`` stays in the principal strip, and
+#: each of these answers feeds the tower into a larger expression
+#: nonlinearly, so the offset differentiates into a real error.  The
+#: rewritten answers prove exactly against their integrands.
+LOG_EXP_UNWRAP = frozenset({
+    1411, 1770, 2364, 2878, 3241, 3319, 3862, 3954, 4674, 4706,
+    6767, 6966, 9136, 9373, 10048, 10277,
+})
+
+#: Hebisch answers replaced outright.  8737's transcription flips the
+#: sign of the imaginary part in a constant: the integrand contains
+#: ``log(-log(2) - I*pi)`` but the answer was written with
+#: ``log(-log(2) + I*pi)``.  The corrected form proves exactly.
+ANSWER_OVERRIDES = {
+    8737: 'x*(3-(x-24+ln(-ln(2)-I*pi))*x)',
+}
+
+
+def unwrap_log_exp(text: str) -> str:
+    """``text`` with ``log(exp(v)) -> v`` and ``log(exp(v)**k) -> k*v``,
+    applied bottom-up until fixed point, as a round-trippable string."""
+    from sympy import Pow, exp, log, sympify
+
+    def rule(s):
+        a = s.args[0]
+        if isinstance(a, exp):
+            return a.args[0]
+        if isinstance(a, Pow) and isinstance(a.base, exp):
+            return a.exp * a.base.args[0]
+        return s
+
+    e = sympify(text)
+    prev = None
+    while prev != e:
+        prev = e
+        e = e.replace(lambda s: isinstance(s, log), rule)
+    return str(e)
 
 
 def read_rows(path: str) -> list:
@@ -78,6 +129,7 @@ def main() -> None:
         out_path = os.path.join(out_dir, suite + '.jsonl')
 
         n_written = n_bad_integrand = n_bad_integral = 0
+        n_corrected = 0
         with open(out_path, 'w', encoding='utf-8') as fh:
             for index, row in enumerate(rows):
                 integrand = row[0]
@@ -87,6 +139,12 @@ def main() -> None:
                 variable = str(row[1])
                 num_steps = row[2] if len(row) > 2 else None
                 answers = [a for a in row[3:] if isinstance(a, str)]
+                if suite == 'hebisch' and index in ANSWER_OVERRIDES:
+                    answers = [ANSWER_OVERRIDES[index]]
+                    n_corrected += 1
+                elif suite == 'hebisch' and index in LOG_EXP_UNWRAP:
+                    answers = [unwrap_log_exp(a) for a in answers]
+                    n_corrected += 1
                 good = [a for a in answers if parses(a)]
                 n_bad_integral += len(answers) - len(good)
                 record = IntegrationTestCase(
@@ -106,9 +164,12 @@ def main() -> None:
                          'rows_in_source': len(rows),
                          'cases_written': n_written,
                          'dropped_unparseable_integrand': n_bad_integrand,
-                         'answers_dropped_unparseable': n_bad_integral}
-        print('%-10s %6d cases (%d integrands dropped, %d answers dropped)'
-              % (suite, n_written, n_bad_integrand, n_bad_integral), flush=True)
+                         'answers_dropped_unparseable': n_bad_integral,
+                         'answers_corrected': n_corrected}
+        print('%-10s %6d cases (%d integrands dropped, %d answers dropped,'
+              ' %d answers corrected)'
+              % (suite, n_written, n_bad_integrand, n_bad_integral,
+                 n_corrected), flush=True)
 
     with open(os.path.join(data_dir, 'NASSER_IMPORT_REPORT.json'), 'w') as fh:
         json.dump(report, fh, indent=2)

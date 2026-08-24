@@ -5,7 +5,8 @@
     "rows_in_source": 10335,
     "cases_written": 10335,
     "dropped_unparseable_integrand": 0,
-    "answers_dropped_unparseable": 0
+    "answers_dropped_unparseable": 0,
+    "answers_corrected": 17
   },
   "blake": {
     "source_file": "9_Blake_problems/BlakeProblems.py",
@@ -13,6 +14,7 @@
     "rows_in_source": 3154,
     "cases_written": 3154,
     "dropped_unparseable_integrand": 0,
-    "answers_dropped_unparseable": 701
+    "answers_dropped_unparseable": 701,
+    "answers_corrected": 0
   }
 }
