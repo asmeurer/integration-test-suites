@@ -60,6 +60,30 @@ def _has_special_functions(f, x) -> bool:
                  besselj, besselk, bessely, hyper, meijerg, polylog, zeta)
 
 
+def _is_trig_rational(f, x) -> bool:
+    """A rational function of circular trig functions of affine arguments.
+
+    The class attacked by Bioche/Weierstrass substitutions: every
+    occurrence of ``x`` sits inside a sin/cos/tan/cot/sec/csc whose
+    argument is affine in ``x``, and the integrand is a rational
+    function of those trig subexpressions.  Frequencies need not be
+    commensurable and coefficients may be symbolic; those subclasses are
+    still worth attempting (or cleanly refusing).
+    """
+    from sympy import Dummy, cos, cot, csc, sec, sin, tan
+
+    trigs = [t for t in f.atoms(sin, cos, tan, cot, sec, csc) if t.has(x)]
+    if not trigs:
+        return False
+    if any(t.args[0].diff(x).has(x) for t in trigs):
+        return False
+    reps = {t: Dummy() for t in trigs}
+    g = f.xreplace(reps)
+    if g.has(x):
+        return False
+    return g.is_rational_function(*reps.values())
+
+
 #: name -> predicate(integrand, variable) -> keep?
 FILTERS: dict[str, Callable] = {
     'rational-exponents': _pow_exponents_are_rational,
@@ -70,6 +94,7 @@ FILTERS: dict[str, Callable] = {
     'parametric': lambda f, x: not _is_concrete(f, x),
     'elementary': lambda f, x: not _has_special_functions(f, x),
     'special-functions': _has_special_functions,
+    'trig-rational': _is_trig_rational,
 }
 
 #: shorthands expanding to several filters
